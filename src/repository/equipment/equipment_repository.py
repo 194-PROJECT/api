@@ -1,0 +1,107 @@
+from database.postgres.query import QueryExecutor
+from database.model.equipment import Equipment
+from sqlalchemy import TextClause, delete, insert, select, update
+from sqlalchemy.dialects import postgresql
+from typing import Optional
+
+from src.dto.equipment.equipment_dto import EquipmentDTO
+
+class EquipmentRepository:
+    @staticmethod
+    def create_equipment(equipment: EquipmentDTO) -> EquipmentDTO:
+        query = (
+            insert(Equipment)
+            .values(
+                name=equipment.name,
+                description=equipment.description,
+                category=equipment.category,
+                purchase_date=equipment.purchase_date,
+                price=equipment.price,
+            )
+            .returning("*")
+            .compile(
+                compile_kwargs={"literal_binds": True},
+                dialect=postgresql.dialect(),
+            )
+        )
+        data = QueryExecutor.insert_one(str(query))
+        return EquipmentDTO(**data) if data else None
+    
+    @staticmethod
+    def get_equipment(id: int) -> Optional[EquipmentDTO]:
+        query = select(Equipment).where(Equipment.id == id).compile(
+            compile_kwargs={"literal_binds": True},
+            dialect=postgresql.dialect(),
+        )
+        data = QueryExecutor.fetch_one(str(query))
+        return EquipmentDTO(**data) if data else None
+
+    @staticmethod
+    def get_equipments(
+        limit: int,
+        offset: int,
+        order_by_clause: Optional[TextClause],
+        where_clause: Optional[TextClause],
+    ) -> Optional[list[EquipmentDTO]]:
+        query = select(Equipment).order_by(order_by_clause)
+
+        if where_clause is not None:
+            query = query.where(where_clause)
+
+        query = (
+            query
+            .limit(limit)
+            .offset(offset)
+            .compile(
+                compile_kwargs={"literal_binds": True},
+                dialect=postgresql.dialect(),
+            )
+        )
+
+        data = QueryExecutor.fetch_all(str(query))
+        return [EquipmentDTO(**equipment) for equipment in data] if data else None
+    
+    @staticmethod
+    def update_equipment(id: int, equipment: EquipmentDTO) -> Optional[EquipmentDTO]:
+        query = (
+            update(Equipment)
+            .where(Equipment.id == id)
+            .values(
+                name=equipment.name,
+                description=equipment.description,
+                category=equipment.category,
+                purchase_date=equipment.purchase_date,
+                price=equipment.price,
+            )
+            .returning("*")
+            .compile(
+                compile_kwargs={"literal_binds": True},
+                dialect=postgresql.dialect(),
+            )
+        )
+        data = QueryExecutor.update_one(str(query))
+        return EquipmentDTO(**data) if data else None
+
+    @staticmethod
+    def delete_equipment(id: int) -> None:
+        query = (
+            delete(Equipment)
+            .where(Equipment.id == id)
+            .compile(
+                compile_kwargs={"literal_binds": True},
+                dialect=postgresql.dialect(),
+            )
+        )
+        QueryExecutor.delete_one(str(query))
+
+    @staticmethod
+    def delete_equipments_by_id(ids: list[int]) -> None:
+        query = (
+            delete(Equipment)
+            .where(Equipment.id.in_(ids))
+            .compile(
+                compile_kwargs={"literal_binds": True},
+                dialect=postgresql.dialect(),
+            )
+        )
+        QueryExecutor.delete_many(str(query))

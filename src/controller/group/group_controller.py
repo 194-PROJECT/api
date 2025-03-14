@@ -1,0 +1,126 @@
+from flask import request
+from core.api import Api, GetModelRequest, response
+
+from database.model.groups import Group, GroupKeyEnum, GroupKeyTypes
+from src.handler.group.group_handler import GroupHandler
+
+app = Api.application
+
+@app.route('/group/<int:id>', methods=['GET'])
+def get_group(id: int):
+    group = GroupHandler.get_group(id)
+
+    if not group:
+        return response(
+            message="Group not found",
+            code=404
+        )
+
+    return response(
+        message=f"Group {group.name} found",
+        code=200,
+        data=group.model_dump()
+    )
+
+@app.route('/group', methods=['GET'])
+def get_groups():
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': Group,
+        'table_keys': GroupKeyEnum,
+        'key_types': GroupKeyTypes,
+    })
+
+    groups = GroupHandler.get_groups(
+        get_request.limit,
+        get_request.offset,
+        get_request.order_by_clause,
+        get_request.where_clause,
+    )
+
+    if not groups or not len(groups):
+        return response(
+            message="No groups found",
+            code=404
+        )
+
+    return response(
+        message="Groups found",
+        code=200,
+        data=[group.model_dump() for group in groups]
+    )
+
+@app.route('/group', methods=['POST'])
+def create_group():
+    group_data = request.json
+    group = GroupHandler.create_group(group_data)
+    
+    if not group:
+        return response(
+            message="Failed to create group",
+            code=400
+        )
+
+    return response(
+        message=f"Group {group.name} created",
+        code=201,
+        data=group.model_dump()
+    )
+
+@app.route('/group/<int:id>', methods=['PUT'])
+def update_group(id: int):
+    group = GroupHandler.get_group(id)
+
+    if not group:
+        return response(
+            message="Cannot update group that does not exist",
+            code=404
+        )
+
+    group_update_request = group.model_copy(update=request.json)
+    updated_group = GroupHandler.update_group(id, group_update_request)
+    
+    return response(
+        message=f"Group {updated_group.name} updated",
+        code=200,
+        data=updated_group.model_dump()
+    )
+
+@app.route('/group/<int:id>', methods=['DELETE'])
+def delete_group(id: int):
+    group = GroupHandler.get_group(id)
+    
+    if not group:
+        return response(
+            message="Cannot delete group that does not exist",
+            code=404
+        )
+    
+    GroupHandler.delete_group(id)
+    
+    return response(
+        message=f"Group {group.name} deleted",
+        code=200
+    )
+
+@app.route('/group', methods=['DELETE'])
+def delete_groups():
+    group_ids = request.args.getlist('ids', type=int)
+
+    if not isinstance(group_ids, list) or not all(isinstance(id, int) for id in group_ids):
+        return response(
+            message="Group ids must be a list of integers",
+            code=400
+        )
+
+    if not group_ids or not len(group_ids):
+        return response(
+            message="No group ids provided",
+            code=400
+        )
+
+    GroupHandler.delete_groups_by_id(group_ids)
+    
+    return response(
+        message="Groups deleted",
+        code=200
+    )

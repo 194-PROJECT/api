@@ -1,0 +1,49 @@
+{
+  "$schema": "https://cdn.statically.io/gh/nguyenngoclongdev/cdn/main/schema/v10/terminal-keeper.json",
+  "theme": "tribe",
+  "active": "default",
+  "activateOnStartup": true,
+  "keepExistingTerminals": false,
+  "sessions": {
+    "default": [
+      {
+        "name": "app",
+        "autoExecuteCommands": true,
+        "icon": "terminal",
+        "color": "terminal.ansiGreen",
+        "commands": [
+          "venv/Scripts/activate",
+          "cls"
+        ]
+      },
+      [
+        {
+          "name": "test",
+          "autoExecuteCommands": true,
+          "icon": "terminal",
+          "color": "terminal.ansiGreen",
+          "commands": [
+            "cls"
+          ]
+        },
+        {
+          "name": "database",
+          "autoExecuteCommands": true,
+          "icon": "terminal",
+          "color": "terminal.ansiGreen",
+          "commands": [
+            "cls"
+          ]
+        }
+      ]
+    ],
+    "saved-session": [
+      {
+        "name": "connect",
+        "commands": [
+          ""
+        ]
+      }
+    ]
+  }
+}

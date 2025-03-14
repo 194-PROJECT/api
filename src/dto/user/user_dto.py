@@ -1,0 +1,18 @@
+from datetime import datetime
+from pydantic import BaseModel, EmailStr
+from typing import Optional
+
+from src.enum.user.user_role_enum import UserRoleEnum
+from src.enum.user.user_type_enum import UserTypeEnum
+
+class UserDTO(BaseModel):
+    id: Optional[int] = 0
+    email: EmailStr
+    username: str
+    first_name: Optional[str]
+    last_name: Optional[str]
+    password: Optional[str]
+    type: Optional[str] = UserTypeEnum.GUEST
+    role: Optional[str] = UserRoleEnum.GUEST
+    created_at: Optional[datetime] = datetime.now()
+    updated_at: Optional[datetime] = datetime.now()

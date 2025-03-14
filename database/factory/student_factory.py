@@ -1,0 +1,22 @@
+from random import randint
+import factory
+from database.factory.program_factory import ProgramFactory
+from database.factory.users_factory import UserFactory
+from database.model.student import Student
+from database.postgres.database import PostgresDatabase
+
+def generate_student_id():
+        return f"{randint(2000, 2100)}-{randint(0, 20000)}"
+
+class StudentFactory(factory.alchemy.SQLAlchemyModelFactory):
+    class Meta:
+        model = Student
+        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_persistence = 'commit'
+
+    student_id = factory.LazyFunction(generate_student_id)
+    created_at = factory.Faker('date_time_this_year')
+    updated_at = factory.Faker('date_time_this_year')
+    # Foreign key and relationship
+    user = factory.SubFactory(UserFactory)
+    program = factory.SubFactory(ProgramFactory)

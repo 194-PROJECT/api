@@ -13,7 +13,8 @@ def get_group(id: int):
     if not group:
         return response(
             message="Group not found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve the requested group"],
         )
 
     return response(
@@ -40,7 +41,8 @@ def get_groups():
     if not groups or not len(groups):
         return response(
             message="No groups found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve any groups"],
         )
 
     return response(
@@ -57,7 +59,8 @@ def create_group():
     if not group:
         return response(
             message="Failed to create group",
-            code=400
+            code=400,
+            errors=["Failed to create the group with the provided data"],
         )
 
     return response(
@@ -72,8 +75,9 @@ def update_group(id: int):
 
     if not group:
         return response(
-            message="Cannot update group that does not exist",
-            code=404
+            message="Group not found",
+            code=404,
+            errors=["Failed to retrieve the requested group for update"],
         )
 
     group_update_request = group.model_copy(update=request.json)
@@ -91,8 +95,9 @@ def delete_group(id: int):
     
     if not group:
         return response(
-            message="Cannot delete group that does not exist",
-            code=404
+            message="Group not found",
+            code=404,
+            errors=["Failed to retrieve the requested group for deletion"],
         )
     
     GroupHandler.delete_group(id)
@@ -108,14 +113,16 @@ def delete_groups():
 
     if not isinstance(group_ids, list) or not all(isinstance(id, int) for id in group_ids):
         return response(
-            message="Group ids must be a list of integers",
-            code=400
+            message="Invalid group ids provided",
+            code=400,
+            errors=["Group ids must be a list of integers"],
         )
 
     if not group_ids or not len(group_ids):
         return response(
             message="No group ids provided",
-            code=400
+            code=400,
+            errors=["Please provide a list of group ids to delete"],
         )
 
     GroupHandler.delete_groups_by_id(group_ids)

@@ -13,7 +13,8 @@ def get_course(id: int):
     if not course:
         return response(
             message="Course not found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve the requested course"],
         )
 
     return response(
@@ -40,7 +41,8 @@ def get_courses():
     if not courses or not len(courses):
         return response(
             message="No courses found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve any courses"],
         )
 
     return response(
@@ -57,7 +59,8 @@ def create_course():
     if not course:
         return response(
             message="Failed to create course",
-            code=400
+            code=400,
+            errors=["Failed to create the course with the provided data"],
         )
 
     return response(
@@ -72,8 +75,9 @@ def update_course(id: int):
 
     if not course:
         return response(
-            message="Cannot update course that does not exist",
-            code=404
+            message="Course not found",
+            code=404,
+            errors=["Failed to retrieve the requested course for update"],
         )
 
     course_update_request = course.model_copy(update=request.json)
@@ -91,8 +95,9 @@ def delete_course(id: int):
     
     if not course:
         return response(
-            message="Cannot delete course that does not exist",
-            code=404
+            message="Course not found",
+            code=404,
+            errors=["Failed to retrieve the requested course for deletion"],
         )
     
     CourseHandler.delete_course(id)
@@ -108,14 +113,16 @@ def delete_courses():
 
     if not isinstance(course_ids, list) or not all(isinstance(id, int) for id in course_ids):
         return response(
-            message="Course ids must be a list of integers",
-            code=400
+            message="Invalid course ids provided",
+            code=400,
+            errors=["Course ids must be a list of integers"],
         )
 
     if not course_ids or not len(course_ids):
         return response(
             message="No course ids provided",
-            code=400
+            code=400,
+            errors=["Please provide a list of course ids to delete"],
         )
 
     CourseHandler.delete_courses_by_id(course_ids)

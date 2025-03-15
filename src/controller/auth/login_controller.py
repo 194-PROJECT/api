@@ -36,19 +36,30 @@ def login():
         case UserIdentifierEnum.USERNAME:
             user = UserHandler.get_user_from_username(username)
         case _:
-            return response("Invalid identifier", 400)
+            return response(
+                code=400,
+                errors=["Invalid identifier"],
+            )
 
     if not user:
-        return response("User not found", 404)
+        return response(
+            message="Login failed",
+            code=404,
+            errors=[f"User not found for {email or username}"],
+        )
 
     valid_password = auth_helper.verify_password(password, user.password)
 
     if not valid_password:
-        return response("Invalid password", 401)
+        return response(
+            message="Login failed",
+            code=401,
+            errors=["Invalid password"],
+        )
     
     session = SessionHandler.create_session(user.id)
 
-    return response(f"Login successful for {username}", 200, data={
+    return response(f"Login successful for {user.username}", 200, data={
         'user': user.model_dump(exclude={'password'}),
         'session': session
     })

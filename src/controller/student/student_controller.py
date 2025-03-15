@@ -13,7 +13,8 @@ def get_student(id: int):
     if not student:
         return response(
             message="Student not found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve the requested student"],
         )
 
     return response(
@@ -40,7 +41,8 @@ def get_students():
     if not students or not len(students):
         return response(
             message="No students found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve any students"],
         )
 
     return response(
@@ -51,9 +53,20 @@ def get_students():
 
 @app.route('/student', methods=['POST'])
 def create_student():
+    student_data = request.json
+    student = StudentHandler.create_student(student_data)
+
+    if not student:
+        return response(
+            message="Failed to create student",
+            code=400,
+            errors=["Failed to create student with the provided data"],
+        )
+
     return response(
-        message = 'Route not implemented',
-        code = 501,
+        message=f"Student {student.id} created",
+        code=201,
+        data=student.model_dump()
     )
 
 @app.route('/student/<int:id>', methods=['PUT'])
@@ -62,8 +75,9 @@ def update_student(id: int):
 
     if not student:
         return response(
-            message="Cannot update student that does not exist",
-            code=404
+            message="Student not found",
+            code=404,
+            errors=["Cannot update student that does not exist"],
         )
 
     student_update_request = student.model_copy(update=request.json)
@@ -72,7 +86,7 @@ def update_student(id: int):
     return response(
         message=f"Student {updated_student.id} updated",
         code=200,
-        data=updated_student
+        data=updated_student.model_dump()
     )
 
 @app.route('/student/<int:id>', methods=['DELETE'])
@@ -81,8 +95,9 @@ def delete_student(id: int):
     
     if not student:
         return response(
-            message="Cannot delete student that does not exist",
-            code=404
+            message="Student not found",
+            code=404,
+            errors=["Cannot delete student that does not exist"],
         )
     
     StudentHandler.delete_student(id)
@@ -98,14 +113,16 @@ def delete_students():
 
     if not isinstance(student_ids, list) or not all(isinstance(id, int) for id in student_ids):
         return response(
-            message="Student ids must be a list of integers",
-            code=400
+            message="Invalid student ids",
+            code=400,
+            errors=["Student ids must be a list of integers"],
         )
 
     if not student_ids or not len(student_ids):
         return response(
             message="No student ids provided",
-            code=400
+            code=400,
+            errors=["Please provide a list of student ids to delete"],
         )
 
     StudentHandler.delete_students_by_id(student_ids)

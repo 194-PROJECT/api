@@ -13,7 +13,8 @@ def get_program(id: int):
     if not program:
         return response(
             message="Program not found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve the requested program"],
         )
 
     return response(
@@ -40,7 +41,8 @@ def get_programs():
     if not programs or not len(programs):
         return response(
             message="No programs found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve any programs"],
         )
 
     return response(
@@ -57,7 +59,8 @@ def create_program():
     if not program:
         return response(
             message="Failed to create program",
-            code=400
+            code=400,
+            errors=["Failed to create the program with the provided data"],
         )
     
     return response(
@@ -72,8 +75,9 @@ def update_program(id: int):
 
     if not program:
         return response(
-            message="Cannot update program that does not exist",
-            code=404
+            message="Program not found",
+            code=404,
+            errors=["Cannot update program that does not exist"],
         )
 
     program_update_request = program.model_copy(update=request.json)
@@ -91,8 +95,9 @@ def delete_program(id: int):
     
     if not program:
         return response(
-            message="Cannot delete program that does not exist",
-            code=404
+            message="Program not found",
+            code=404,
+            errors=["Cannot delete program that does not exist"],
         )
     
     ProgramHandler.delete_program(id)
@@ -108,14 +113,16 @@ def delete_programs():
 
     if not isinstance(program_ids, list) or not all(isinstance(id, int) for id in program_ids):
         return response(
-            message="Program ids must be a list of integers",
-            code=400
+            message="Invalid program ids provided",
+            code=400,
+            errors=["Program ids must be a list of integers"],
         )
 
     if not program_ids or not len(program_ids):
         return response(
             message="No program ids provided",
-            code=400
+            code=400,
+            errors=["Please provide a list of program ids to delete"],
         )
 
     ProgramHandler.delete_programs_by_id(program_ids)

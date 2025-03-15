@@ -40,8 +40,9 @@ def signup():
 
     if not is_available:
         return response(
-            message='Email or username already in use',
-            code=409
+            message='Signup failed',
+            code=409,
+            errors=['Email or username already in use'],
         )
 
     # Auto assign role and type based on email domain
@@ -51,8 +52,9 @@ def signup():
     # Guest should not be able to signup here
     if (role == UserRoleEnum.GUEST):
         return response(
-            message='Guest users should go to the account request form instead',
-            code=400
+            message='Signup failed',
+            code=400,
+            errors=['Guests are not allowed to signup'],
         )
 
     # Check if the email domain is UP and if the required fields are provided
@@ -62,8 +64,9 @@ def signup():
         and (not signup_request.program_id or not signup_request.student_id)
     ):
         return response(
-            message='Program ID is required for UP email addresses',
-            code=400
+            message='Signup failed',
+            code=400,
+            errors=['Program ID and Student ID are required for students'],
         )
 
     signup_request.password = auth_helper.decrypt(signup_request.password)

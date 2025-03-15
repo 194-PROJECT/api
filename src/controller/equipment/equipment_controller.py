@@ -13,7 +13,8 @@ def get_equipment(id: int):
     if not equipment:
         return response(
             message="Equipment not found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve the requested equipment"],
         )
 
     return response(
@@ -40,7 +41,8 @@ def get_equipments():
     if not equipments or not len(equipments):
         return response(
             message="No equipments found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve any equipments"],
         )
 
     return response(
@@ -57,7 +59,8 @@ def create_equipment():
     if not equipment:
         return response(
             message="Failed to create equipment",
-            code=400
+            code=400,
+            errors=["Failed to create equipment from the provided data"],
         )
 
     return response(
@@ -72,8 +75,9 @@ def update_equipment(id: int):
 
     if not equipment:
         return response(
-            message="Cannot update equipment that does not exist",
-            code=404
+            message="Equipment not found",
+            code=404,
+            errors=["Failed to retrieve the requested equipment for update"],
         )
 
     equipment_update_request = equipment.model_copy(update=request.json)
@@ -91,8 +95,9 @@ def delete_equipment(id: int):
     
     if not equipment:
         return response(
-            message="Cannot delete equipment that does not exist",
-            code=404
+            message="Equipment not found",
+            code=404,
+            errors=["Failed to retrieve the requested equipment for deletion"],
         )
     
     EquipmentHandler.delete_equipment(id)
@@ -108,14 +113,16 @@ def delete_equipments():
 
     if not isinstance(equipment_ids, list) or not all(isinstance(id, int) for id in equipment_ids):
         return response(
-            message="Equipment ids must be a list of integers",
-            code=400
+            message="Invalid equipment ids provided",
+            code=400,
+            errors=["Equipment ids must be a list of integers"],
         )
 
     if not equipment_ids or not len(equipment_ids):
         return response(
             message="No equipment ids provided",
-            code=400
+            code=400,
+            errors=["Please provide a list of equipment ids to delete"],
         )
 
     EquipmentHandler.delete_equipments_by_id(equipment_ids)

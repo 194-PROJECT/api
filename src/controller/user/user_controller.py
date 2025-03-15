@@ -13,7 +13,8 @@ def get_user(id: int):
     if not user:
         return response(
             message="User not found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve the requested user"],
         )
 
     return response(
@@ -40,7 +41,8 @@ def get_users():
     if not users or not len(users):
         return response(
             message="No users found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve any users"],
         )
 
     return response(
@@ -51,9 +53,20 @@ def get_users():
 
 @app.route('/user', methods=['POST'])
 def create_user():
+    user_data = request.json
+    user = UserHandler.create_user(user_data)
+    
+    if not user:
+        return response(
+            message="Failed to create user",
+            code=400,
+            errors=["Failed to create user with the provided data"],
+        )
+
     return response(
-        message = 'Route not implemented',
-        code = 501,
+        message=f"User {user.username} created",
+        code=201,
+        data=user.model_dump(exclude=['password'])
     )
 
 @app.route('/user/<int:id>', methods=['PUT'])
@@ -62,8 +75,9 @@ def update_user(id: int):
 
     if not user:
         return response(
-            message="Cannot update user that does not exist",
-            code=404
+            message="User not found",
+            code=404,
+            errors=["Cannot update user that does not exist"],
         )
 
     user_update_request = user.model_copy(update=request.json)
@@ -81,8 +95,9 @@ def delete_user(id: int):
     
     if not user:
         return response(
-            message="Cannot delete user that does not exist",
-            code=404
+            message="User not found",
+            code=404,
+            errors=["Cannot delete user that does not exist"],
         )
     
     UserHandler.delete_user(id)
@@ -98,14 +113,16 @@ def delete_users():
 
     if not isinstance(user_ids, list) or not all(isinstance(id, int) for id in user_ids):
         return response(
-            message="User ids must be a list of integers",
-            code=400
+            message="Invalid user ids",
+            code=400,
+            errors=["User ids must be a list of integers"],
         )
 
     if not user_ids or not len(user_ids):
         return response(
             message="No user ids provided",
-            code=400
+            code=400,
+            errors=["Please provide a list of user ids to delete"],
         )
 
     UserHandler.delete_users_by_id(user_ids)

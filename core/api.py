@@ -230,7 +230,7 @@ These are the functions that are use to parse and return the response data.
 """
 class Response[T](BaseModel):
     data: Optional[T] = None
-    message: str
+    message: str = 'error'
     errors: Optional[List[str]] = None
 
 def response[T](
@@ -248,12 +248,6 @@ def response[T](
     Returns:
         Response[T]: The constructed response object.
     """
-    return (
-        (
-            Response[T](data=data, message=message, errors=errors).model_dump_json(),
-            code,
-        )
-        if data
-        else (Response[T](message=message).model_dump_json(), code)
-    )
-
+    return Response[T](
+        data=data, message=message, errors=errors
+    ).model_dump_json(), code

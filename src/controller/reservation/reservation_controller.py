@@ -14,7 +14,8 @@ def get_reservation(id: int):
     if not reservation:
         return response(
             message="Reservation not found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve the requested reservation"],
         )
 
     return response(
@@ -41,7 +42,8 @@ def get_reservations():
     if not reservations or not len(reservations):
         return response(
             message="No reservations found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve any reservations"],
         )
 
     return response(
@@ -56,6 +58,13 @@ def create_reservation():
     reservation = ReservationDTO(**reservation_data)
     created_reservation = ReservationHandler.create_reservation(reservation)
     
+    if not created_reservation:
+        return response(
+            message="Failed to create reservation",
+            code=400,
+            errors=["Failed to create the reservation with the provided data"],
+        )
+
     return response(
         message=f"Reservation {created_reservation.id} created",
         code=201,
@@ -68,8 +77,9 @@ def update_reservation(id: int):
 
     if not reservation:
         return response(
-            message="Cannot update reservation that does not exist",
-            code=404
+            message="Reservation not found",
+            code=404,
+            errors=["Cannot update reservation that does not exist"],
         )
 
     reservation_update_request = reservation.model_copy(update=request.json)
@@ -87,8 +97,9 @@ def delete_reservation(id: int):
     
     if not reservation:
         return response(
-            message="Cannot delete reservation that does not exist",
-            code=404
+            message="Reservation not found",
+            code=404,
+            errors=["Cannot delete reservation that does not exist"],
         )
     
     ReservationHandler.delete_reservation(id)
@@ -104,14 +115,16 @@ def delete_reservations():
 
     if not isinstance(reservation_ids, list) or not all(isinstance(id, int) for id in reservation_ids):
         return response(
-            message="Reservation ids must be a list of integers",
-            code=400
+            message="Invalid reservation ids provided",
+            code=400,
+            errors=["Reservation ids must be a list of integers"],
         )
 
     if not reservation_ids or not len(reservation_ids):
         return response(
             message="No reservation ids provided",
-            code=400
+            code=400,
+            errors=["Please provide a list of reservation ids to delete"],
         )
 
     ReservationHandler.delete_reservations_by_id(reservation_ids)

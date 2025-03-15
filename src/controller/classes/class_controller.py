@@ -13,7 +13,8 @@ def get_class(id: int):
     if not class_:
         return response(
             message="Class not found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve the requested class data"],
         )
 
     return response(
@@ -40,7 +41,8 @@ def get_classes():
     if not classes or not len(classes):
         return response(
             message="No classes found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve any classes"],
         )
 
     return response(
@@ -57,7 +59,8 @@ def create_class():
     if not new_class:
         return response(
             message="Failed to create class",
-            code=400
+            code=400,
+            errors=["Failed to create the class with the provided data"],
         )
 
     return response(
@@ -72,8 +75,9 @@ def update_class(id: int):
 
     if not class_:
         return response(
-            message="Cannot update class that does not exist",
-            code=404
+            message="Class not found",
+            code=404,
+            errors=["Cannot update class that does not exist"],
         )
 
     class_update_request = class_.model_copy(update=request.json)
@@ -91,8 +95,9 @@ def delete_class(id: int):
     
     if not class_:
         return response(
-            message="Cannot delete class that does not exist",
-            code=404
+            message="Class not found",
+            code=404,
+            errors=["Cannot delete class that does not exist"]
         )
     
     ClassHandler.delete_class(id)
@@ -108,14 +113,16 @@ def delete_classes():
 
     if not isinstance(class_ids, list) or not all(isinstance(id, int) for id in class_ids):
         return response(
-            message="Class ids must be a list of integers",
-            code=400
+            message="Invalid course ids provided",
+            code=400,
+            errors=["Class ids must be a list of integers"]
         )
 
     if not class_ids or not len(class_ids):
         return response(
             message="No class ids provided",
-            code=400
+            code=400,
+            errors=["Please provide class ids to delete"],
         )
 
     ClassHandler.delete_classes_by_id(class_ids)

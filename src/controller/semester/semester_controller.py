@@ -14,7 +14,8 @@ def get_semester(id: int):
     if not semester:
         return response(
             message="Semester not found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve the requested semester"],
         )
 
     return response(
@@ -41,7 +42,8 @@ def get_semesters():
     if not semesters or not len(semesters):
         return response(
             message="No semesters found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve any semesters"],
         )
 
     return response(
@@ -58,7 +60,8 @@ def create_semester():
     if not semester:
         return response(
             message="Failed to create semester",
-            code=400
+            code=400,
+            errors=["Failed to create the semester with the provided data"],
         )
 
     return response(
@@ -73,8 +76,9 @@ def update_semester(id: int):
 
     if not semester:
         return response(
-            message="Cannot update semester that does not exist",
-            code=404
+            message="Semester not found",
+            code=404,
+            errors=["Cannot update semester that does not exist"],
         )
 
     semester_update_request = semester.model_copy(update=request.json)
@@ -92,8 +96,9 @@ def delete_semester(id: int):
     
     if not semester:
         return response(
-            message="Cannot delete semester that does not exist",
-            code=404
+            message="Semester not found",
+            code=404,
+            errors=["Cannot delete semester that does not exist"],
         )
     
     SemesterHandler.delete_semester(id)
@@ -109,14 +114,16 @@ def delete_semesters():
 
     if not isinstance(semester_ids, list) or not all(isinstance(id, int) for id in semester_ids):
         return response(
-            message="Semester ids must be a list of integers",
-            code=400
+            message="Invalid semester ids",
+            code=400,
+            errors=["Semester ids must be a list of integers"],
         )
 
     if not semester_ids or not len(semester_ids):
         return response(
             message="No semester ids provided",
-            code=400
+            code=400,
+            errors=["Please provide a list of semester ids to delete"],
         )
 
     SemesterHandler.delete_semesters_by_id(semester_ids)

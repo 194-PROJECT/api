@@ -13,7 +13,8 @@ def get_asset(id: int):
     if not asset:
         return response(
             message="Asset not found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve the requested asset"],
         )
 
     return response(
@@ -40,7 +41,8 @@ def get_assets():
     if not assets or not len(assets):
         return response(
             message="No assets found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve any assets"],
         )
 
     return response(
@@ -57,7 +59,8 @@ def create_asset():
     if not new_asset:
         return response(
             message="Failed to create asset",
-            code=400
+            code=400,
+            errors=["Failed to create asset from the provided data"],
         )
 
     return response(
@@ -72,8 +75,9 @@ def update_asset(id: int):
 
     if not asset:
         return response(
-            message="Cannot update asset that does not exist",
-            code=404
+            message="Asset not found",
+            code=404,
+            errors=["Cannot update asset that does not exist"]
         )
 
     asset_update_request = asset.model_copy(update=request.json)
@@ -91,8 +95,9 @@ def delete_asset(id: int):
     
     if not asset:
         return response(
-            message="Cannot delete asset that does not exist",
-            code=404
+            message="Asset not found",
+            code=404,
+            errors=["Cannot delete asset that does not exist"],
         )
     
     AssetHandler.delete_asset(id)
@@ -108,14 +113,16 @@ def delete_assets():
 
     if not isinstance(asset_ids, list) or not all(isinstance(id, int) for id in asset_ids):
         return response(
-            message="Asset ids must be a list of integers",
-            code=400
+            message="Invalid course ids provided",
+            code=400,
+            errors=["Asset ids must be a list of integers"],
         )
 
     if not asset_ids or not len(asset_ids):
         return response(
             message="No asset ids provided",
-            code=400
+            code=400,
+            errors=["No asset ids provided"],
         )
 
     AssetHandler.delete_assets_by_id(asset_ids)

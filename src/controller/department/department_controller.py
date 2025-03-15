@@ -13,7 +13,8 @@ def get_department(id: int):
     if not department:
         return response(
             message="Department not found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve the requested department"],
         )
 
     return response(
@@ -40,7 +41,8 @@ def get_departments():
     if not departments or not len(departments):
         return response(
             message="No departments found",
-            code=404
+            code=404,
+            errors=["Failed to retrieve any departments"],
         )
 
     return response(
@@ -66,8 +68,9 @@ def update_department(id: int):
 
     if not department:
         return response(
-            message="Cannot update department that does not exist",
-            code=404
+            message="Department not found",
+            code=404,
+            errors=["Department does not exist"],
         )
 
     department_update_request = department.model_copy(update=request.json)
@@ -85,8 +88,9 @@ def delete_department(id: int):
     
     if not department:
         return response(
-            message="Cannot delete department that does not exist",
-            code=404
+            message="Department not found",
+            code=404,
+            errors=["Cannot delete department that does not exist"],
         )
     
     DepartmentHandler.delete_department(id)
@@ -102,14 +106,16 @@ def delete_departments():
 
     if not isinstance(department_ids, list) or not all(isinstance(id, int) for id in department_ids):
         return response(
-            message="Department ids must be a list of integers",
-            code=400
+            message="Invalid department ids",
+            code=400,
+            errors=["Department ids must be a list of integers"],
         )
 
     if not department_ids or not len(department_ids):
         return response(
             message="No department ids provided",
-            code=400
+            code=400,
+            errors=["Please provide a list of department ids to delete"],
         )
 
     DepartmentHandler.delete_departments_by_id(department_ids)

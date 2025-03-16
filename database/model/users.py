@@ -13,6 +13,7 @@ class User(Base):
     password = Column(String(255), nullable=False)
     type = Column(String(255), index=True)
     role = Column(String(255), index=True)
+    profile_picture_url = Column(String(255))
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
     # 'To' Relationships

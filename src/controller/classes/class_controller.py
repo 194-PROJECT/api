@@ -2,6 +2,7 @@ from flask import request
 from core.api import Api, GetModelRequest, response
 
 from database.model.classes import Class, ClassKeyEnum, ClassKeyTypes
+from src.dto.classes.class_dto import ClassDTO
 from src.handler.classes.class_handler import ClassHandler
 
 app = Api.application
@@ -53,7 +54,7 @@ def get_classes():
 
 @app.route('/class', methods=['POST'])
 def create_class():
-    class_data = request.json
+    class_data = ClassDTO(**request.json)
     new_class = ClassHandler.create_class(class_data)
     
     if not new_class:

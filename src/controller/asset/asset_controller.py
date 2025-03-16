@@ -2,6 +2,7 @@ from flask import request
 from core.api import Api, GetModelRequest, response
 
 from database.model.asset import Asset, AssetKeyEnum, AssetKeyTypes
+from src.dto.asset.asset_dto import AssetDTO
 from src.handler.asset.asset_handler import AssetHandler
 
 app = Api.application
@@ -53,7 +54,7 @@ def get_assets():
 
 @app.route('/asset', methods=['POST'])
 def create_asset():
-    asset_data = request.json
+    asset_data = AssetDTO(**request.json)
     new_asset = AssetHandler.create_asset(asset_data)
     
     if not new_asset:

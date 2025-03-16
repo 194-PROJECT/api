@@ -2,6 +2,7 @@ from flask import request
 from core.api import Api, GetModelRequest, response
 
 from database.model.student import Student, StudentKeyEnum, StudentKeyTypes
+from src.dto.student.student_dto import StudentDTO
 from src.handler.student.student_handler import StudentHandler
 
 app = Api.application
@@ -53,7 +54,7 @@ def get_students():
 
 @app.route('/student', methods=['POST'])
 def create_student():
-    student_data = request.json
+    student_data = StudentDTO(**request.json)
     student = StudentHandler.create_student(student_data)
 
     if not student:

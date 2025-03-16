@@ -2,6 +2,7 @@ from flask import request
 from core.api import Api, GetModelRequest, response
 
 from database.model.groups import Group, GroupKeyEnum, GroupKeyTypes
+from src.dto.group.group_dto import GroupDTO
 from src.handler.group.group_handler import GroupHandler
 
 app = Api.application
@@ -53,7 +54,7 @@ def get_groups():
 
 @app.route('/group', methods=['POST'])
 def create_group():
-    group_data = request.json
+    group_data = GroupDTO(**request.json)
     group = GroupHandler.create_group(group_data)
     
     if not group:

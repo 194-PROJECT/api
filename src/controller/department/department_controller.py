@@ -2,6 +2,7 @@ from flask import request
 from core.api import Api, GetModelRequest, response
 
 from database.model.department import Department, DepartmentKeyEnum, DepartmentKeyTypes
+from src.dto.department.department_dto import DepartmentDTO
 from src.handler.department.department_handler import DepartmentHandler
 
 app = Api.application
@@ -53,8 +54,15 @@ def get_departments():
 
 @app.route('/department', methods=['POST'])
 def create_department():
-    department_data = request.json
+    department_data = DepartmentDTO(**request.json)
     department = DepartmentHandler.create_department(department_data)
+    
+    if not department:
+        return response(
+            message="Failed to create department",
+            code=400,
+            errors=["Failed to create equipment from the provided data"],
+        )
     
     return response(
         message=f"Department {department.name} created",

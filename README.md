@@ -7,7 +7,7 @@ This involves everything you need to build endpoints for the item scheduling app
 Clone this repository then use the following commands to prepare the dependencies
 
 ```bash
-cd path-to-project
+cd path-to-project/api
 
 # create a virtual environment
 python -m venv venv
@@ -47,9 +47,11 @@ Here is the project structure:
 └── seed.py
 ```
 
-#### Environment variables 
+#### Environment variables
 
-Create a `.env` file with the following content
+Create a `.env` file with the following content:
+
+> Make sure to replace the values with the actual values for your database
 
 ```
 ENCRYPTION_KEY="gwbI7/iLikatYxm+cvYwfpC35dvdCUeSYJA0/sB7dxQ=" # THIS IS JUST A DUMMY VALUE
@@ -62,7 +64,21 @@ POSTGRESQL_USER=postgres
 POSTGRESQL_PASSWORD=password
 ```
 
-> ALL OF THESE ARE JUST PLACEHOLDER VALUES
+#### Schema and seeding
+
+To create the database schema and seed the database, run the following commands:
+
+> Be sure to have postgres running on your machine and the database credentials are correct
+
+```bash
+# create the database schema
+python schema.py postgres
+
+# seed the database
+python seed.py postgres
+```
+
+This will create the necessary tables and seed the database with some initial data. Table definitions can be found in the `database/model` directory. Add more tables as needed.
 
 ## Developing
 

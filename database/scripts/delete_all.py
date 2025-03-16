@@ -14,5 +14,6 @@ def delete_all_database_tables():
         for name, obj in vars(module).items():
             if isinstance(obj, type) and hasattr(obj, '__table__'):
                 if module_name == obj.__table__.name:
-                    print(f"\033[91mDeleting table: {obj.__table__.name}\033[0m")
-                    QueryExecutor.execute(f"DROP TABLE IF EXISTS {obj.__table__.name} CASCADE")
+                    query = f"DROP TABLE IF EXISTS {obj.__table__.name} CASCADE"
+                    print(f"\033[91mRunning: {query}\033[0m")
+                    QueryExecutor.execute(query)

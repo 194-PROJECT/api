@@ -6,96 +6,127 @@ class QueryExecutor:
     
     @staticmethod
     def fetch_all(query: str, params: Optional[List[Any]] = None) -> Optional[List[Any]]:
-        with QueryExecutor.db.get_connection() as conn:
+        conn = QueryExecutor.db.get_connection()
+        try:
             with conn.cursor() as cursor:
                 cursor.execute(query, params)
                 result = cursor.fetchall()
                 return QueryExecutor.__parse_results_many(cursor, result)
+        finally:
+            conn.close()
 
     @staticmethod
     def fetch_many(query: str, size: int, params: Optional[List[Any]] = None) -> Optional[List[Any]]:
-        with QueryExecutor.db.get_connection() as conn:
+        conn = QueryExecutor.db.get_connection()
+        try:
             with conn.cursor() as cursor:
                 cursor.execute(query, params)
                 result = cursor.fetchmany(size)
                 return QueryExecutor.__parse_results_many(cursor, result)
+        finally:
+            conn.close()
 
     @staticmethod
-    def fetch_one(
-        query: str, params: Optional[List[Any]] = None
-    ) -> Optional[Any]:
-        with QueryExecutor.db.get_connection() as conn:
+    def fetch_one(query: str, params: Optional[List[Any]] = None) -> Optional[Any]:
+        conn = QueryExecutor.db.get_connection()
+        try:
             with conn.cursor() as cursor:
                 cursor.execute(query, params)
                 result = cursor.fetchone()
                 return QueryExecutor.__parse_result(cursor, result)
+        finally:
+            conn.close()
 
     @staticmethod       
-    def insert_one(
-        query: str, params: Optional[List[Any]] = None
-    ) -> Optional[Any]:
-        with QueryExecutor.db.get_connection() as conn:
+    def insert_one(query: str, params: Optional[List[Any]] = None) -> Optional[Any]:
+        conn = QueryExecutor.db.get_connection()
+        try:
             with conn.cursor() as cursor:
                 cursor.execute(query, params)
                 if cursor.description is not None:
                     result = cursor.fetchone()
                 else:
                     result = None
+                conn.commit()
                 return QueryExecutor.__parse_result(cursor, result)
+        finally:
+            conn.close()
 
-    def insert_many(
-        query: str, params: Optional[List[Any]] = None
-    ) -> Optional[List[Any]]:
-        with QueryExecutor.db.get_connection() as conn:
+    @staticmethod
+    def insert_many(query: str, params: Optional[List[Any]] = None) -> Optional[List[Any]]:
+        conn = QueryExecutor.db.get_connection()
+        try:
             with conn.cursor() as cursor:
                 cursor.execute(query, params)
                 result = cursor.fetchall()
+                conn.commit()
                 return QueryExecutor.__parse_results_many(cursor, result)
+        finally:
+            conn.close()
 
-    def update_one(
-        query: str, params: Optional[List[Any]] = None
-    ) -> Optional[List[Any]]:
-        with QueryExecutor.db.get_connection() as conn:
+    @staticmethod
+    def update_one(query: str, params: Optional[List[Any]] = None) -> Optional[List[Any]]:
+        conn = QueryExecutor.db.get_connection()
+        try:
             with conn.cursor() as cursor:
                 cursor.execute(query, params)
                 result = cursor.fetchone()
+                conn.commit()
                 return QueryExecutor.__parse_result(cursor, result)
+        finally:
+            conn.close()
 
-    def update_many(
-        query: str, params: Optional[List[Any]] = None
-    ) -> Optional[List[Any]]:
-        with QueryExecutor.db.get_connection() as conn:
+    @staticmethod
+    def update_many(query: str, params: Optional[List[Any]] = None) -> Optional[List[Any]]:
+        conn = QueryExecutor.db.get_connection()
+        try:
             with conn.cursor() as cursor:
                 cursor.execute(query, params)
                 result = cursor.fetchall()
+                conn.commit()
                 return QueryExecutor.__parse_results_many(cursor, result)
+        finally:
+            conn.close()
 
-    def delete_one(
-        query: str, params: Optional[List[Any]] = None
-    ) -> None:
-        with QueryExecutor.db.get_connection() as conn:
+    @staticmethod
+    def delete_one(query: str, params: Optional[List[Any]] = None) -> None:
+        conn = QueryExecutor.db.get_connection()
+        try:
             with conn.cursor() as cursor:
                 cursor.execute(query, params)
+                conn.commit()
+        finally:
+            conn.close()
 
-    def delete_many(
-        query: str, params: Optional[List[Any]] = None
-    ) -> None:
-        with QueryExecutor.db.get_connection() as conn:
+    @staticmethod
+    def delete_many(query: str, params: Optional[List[Any]] = None) -> None:
+        conn = QueryExecutor.db.get_connection()
+        try:
             with conn.cursor() as cursor:
                 cursor.execute(query, params)
+                conn.commit()
+        finally:
+            conn.close()
 
     @staticmethod
     def execute(query: str, params: Optional[List[Any]] = None) -> None:
-        with QueryExecutor.db.get_connection() as conn:
+        conn = QueryExecutor.db.get_connection()
+        try:
             with conn.cursor() as cursor:
                 cursor.execute(query, params)
+                conn.commit()
+        finally:
+            conn.close()
 
     @staticmethod
     def count(query: str, params: Optional[List[Any]] = None) -> int:
-        with QueryExecutor.db.get_connection() as conn:
+        conn = QueryExecutor.db.get_connection()
+        try:
             with conn.cursor() as cursor:
                 cursor.execute(query, params)
                 return cursor.rowcount
+        finally:
+            conn.close()
 
     @staticmethod
     def __parse_result(cursor, result):

@@ -2,6 +2,7 @@ from flask import request
 from core.api import Api, GetModelRequest, response
 
 from database.model.course import Course, CourseKeyEnum, CourseKeyTypes
+from src.dto.course.course_dto import CourseDTO
 from src.handler.course.course_handler import CourseHandler
 
 app = Api.application
@@ -53,7 +54,7 @@ def get_courses():
 
 @app.route('/course', methods=['POST'])
 def create_course():
-    course_data = request.json
+    course_data = CourseDTO(**request.json)
     course = CourseHandler.create_course(course_data)
     
     if not course:

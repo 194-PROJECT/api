@@ -54,7 +54,7 @@ def get_semesters():
 
 @app.route('/semester', methods=['POST'])
 def create_semester():
-    semester_data = request.json
+    semester_data = SemesterDTO(**request.json)
     semester = SemesterHandler.create_semester(SemesterDTO(**semester_data))
 
     if not semester:

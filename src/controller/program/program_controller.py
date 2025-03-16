@@ -2,6 +2,7 @@ from flask import request
 from core.api import Api, GetModelRequest, response
 
 from database.model.program import Program, ProgramKeyEnum, ProgramKeyTypes
+from src.dto.program.program_dto import ProgramDTO
 from src.handler.program.program_handler import ProgramHandler
 
 app = Api.application
@@ -53,7 +54,7 @@ def get_programs():
 
 @app.route('/program', methods=['POST'])
 def create_program():
-    program_data = request.json
+    program_data = ProgramDTO(**request.json)
     program = ProgramHandler.create_program(program_data)
     
     if not program:

@@ -12,7 +12,8 @@ class UserDTO(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
     password: Optional[str]
-    type: Optional[str] = UserTypeEnum.GUEST
-    role: Optional[str] = UserRoleEnum.GUEST
+    type: Optional[UserTypeEnum] = UserTypeEnum.GUEST
+    role: Optional[UserRoleEnum] = UserRoleEnum.GUEST
+    profile_picture_url: Optional[str] = None
     created_at: Optional[datetime] = datetime.now()
     updated_at: Optional[datetime] = datetime.now()

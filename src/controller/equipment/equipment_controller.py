@@ -2,6 +2,7 @@ from flask import request
 from core.api import Api, GetModelRequest, response
 
 from database.model.equipment import Equipment, EquipmentKeyEnum, EquipmentKeyTypes
+from src.dto.equipment.equipment_dto import EquipmentDTO
 from src.handler.equipment.equipment_handler import EquipmentHandler
 
 app = Api.application
@@ -53,7 +54,7 @@ def get_equipments():
 
 @app.route('/equipment', methods=['POST'])
 def create_equipment():
-    equipment_data = request.json
+    equipment_data = EquipmentDTO(**request.json)
     equipment = EquipmentHandler.create_equipment(equipment_data)
     
     if not equipment:

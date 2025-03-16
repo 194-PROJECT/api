@@ -1,7 +1,9 @@
 from flask import request
+from core import auth_helper
 from core.api import Api, GetModelRequest, response
 
 from database.model.users import User, UserKeyEnum, UserKeyTypes
+from src.dto.user.user_dto import UserDTO
 from src.handler.user.user_handler import UserHandler
 
 app = Api.application
@@ -53,9 +55,19 @@ def get_users():
 
 @app.route('/user', methods=['POST'])
 def create_user():
-    user_data = request.json
+    user_data = UserDTO(**request.json)
+    is_available = UserHandler.check_availability(user_data.email, user_data.username)
+
+    if not is_available:
+        return response(
+            message='Failed to create user',
+            code=409,
+            errors=['Email or username already in use'],
+        )
+
+    user_data.password = auth_helper.decrypt(user_data.password)
     user = UserHandler.create_user(user_data)
-    
+
     if not user:
         return response(
             message="Failed to create user",

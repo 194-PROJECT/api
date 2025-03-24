@@ -79,6 +79,24 @@ class UserRepository:
         )
         data = QueryExecutor.fetch_one(str(query))
         return UserDTO(**data) if data else None
+    
+    @staticmethod
+    def get_user_count(where_clause: Optional[TextClause]) -> int:
+        # query = f"""
+        #     SELECT (reltuples / relpages * (pg_relation_size(oid) / 8192))::bigint AS count
+        #     FROM pg_class
+        #     WHERE oid = '{User.__table__}'::regclass;
+        # """
+        query = f"""
+            SELECT COUNT({User.__table__}.id) AS count
+            FROM {User.__table__}
+        """
+        if where_clause is not None:
+            query = f"{query} WHERE {where_clause}"
+
+        print(query)
+        data = QueryExecutor.fetch_one(str(query))
+        return data['count'] if data else 0
 
     @staticmethod
     def update_user(id: int, user: UserDTO) -> Optional[UserDTO]:

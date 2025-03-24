@@ -29,6 +29,10 @@ class UserHandler:
     @staticmethod
     def get_user_from_username(username: str) -> Optional[UserDTO]:
         return UserRepository.get_user_from_username(username)
+    
+    @staticmethod
+    def get_user_count(where_clause: Optional[TextClause]) -> int:
+        return UserRepository.get_user_count(where_clause)
 
     @staticmethod
     def update_user(id: int, user: UserDTO) -> Optional[UserDTO]:

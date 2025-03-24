@@ -115,15 +115,6 @@ class GetRequest(BaseModel):
     offset: Optional[int] = None
     page: Optional[int] = None
     page_size: Optional[int] = None
-    
-    @model_validator(mode="after")
-    def offset_from_page_size(self, info: ValidationInfo) -> Self:
-        if not self.page or not self.page_size:
-            return self
-
-        self.limit = self.page_size
-        self.offset = (self.page - 1) * self.page_size
-        return self
 
     @field_validator("limit", mode="after")
     @classmethod
@@ -137,6 +128,29 @@ class GetRequest(BaseModel):
     @classmethod
     def validate_offset(cls, value: int):
         return max([value, 0])
+
+    @model_validator(mode="after")
+    def page_from_limit(self, info: ValidationInfo) -> Self:
+        if self.page and self.page_size:
+            return self
+
+        if not self.limit or not self.offset:
+            return self
+
+        self.page = self.offset // self.limit + 1
+        self.page_size = self.limit
+
+    @model_validator(mode="after")
+    def offset_from_page_size(self, info: ValidationInfo) -> Self:
+        if self.limit and self.offset:
+            return self
+
+        if not self.page or not self.page_size:
+            return self
+
+        self.limit = self.page_size
+        self.offset = (self.page - 1) * self.page_size
+        return self
 
 class GetModelRequest(GetRequest):
     DEFAULT_ORDER_BY: ClassVar[str] = 'id'
@@ -232,9 +246,16 @@ class Response[T](BaseModel):
     data: Optional[T] = None
     message: str = 'error'
     errors: Optional[List[str]] = None
+    page: Optional[int] = None
+    total_rows: Optional[int] = None
 
 def response[T](
-    message: str, code: int, data: Any = None, errors: Optional[List[str]] = None
+    message: str,
+    code: int,
+    data: Any = None,
+    errors: Optional[List[str]] = None,
+    page: Optional[int] = None,
+    total_rows: Optional[int] = None,
 ) -> Response[T]:
     """
     Constructs a response object.
@@ -244,10 +265,12 @@ def response[T](
         code (int): The HTTP status code for the response.
         data (Any, optional): The data to include in the response. Defaults to None.
         errors (Optional[List[str]], optional): A list of error messages. Defaults to None.
+        page (Optional[int], optional): The page number for the response. Defaults to None.
+        count (Optional[int], optional): The count of the data. Defaults to None.
 
     Returns:
         Response[T]: The constructed response object.
     """
     return Response[T](
-        data=data, message=message, errors=errors
+        data=data, message=message, errors=errors, page=page, total_rows=total_rows
     ).model_dump_json(), code

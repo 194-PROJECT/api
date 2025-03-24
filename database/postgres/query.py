@@ -14,6 +14,8 @@ class QueryExecutor:
                 return QueryExecutor.__parse_results_many(cursor, result)
         finally:
             conn.close()
+            QueryExecutor.db.return_connection(conn)
+            
 
     @staticmethod
     def fetch_many(query: str, size: int, params: Optional[List[Any]] = None) -> Optional[List[Any]]:
@@ -25,6 +27,7 @@ class QueryExecutor:
                 return QueryExecutor.__parse_results_many(cursor, result)
         finally:
             conn.close()
+            QueryExecutor.db.return_connection(conn)
 
     @staticmethod
     def fetch_one(query: str, params: Optional[List[Any]] = None) -> Optional[Any]:
@@ -36,6 +39,7 @@ class QueryExecutor:
                 return QueryExecutor.__parse_result(cursor, result)
         finally:
             conn.close()
+            QueryExecutor.db.return_connection(conn)
 
     @staticmethod       
     def insert_one(query: str, params: Optional[List[Any]] = None) -> Optional[Any]:
@@ -51,6 +55,7 @@ class QueryExecutor:
                 return QueryExecutor.__parse_result(cursor, result)
         finally:
             conn.close()
+            QueryExecutor.db.return_connection(conn)
 
     @staticmethod
     def insert_many(query: str, params: Optional[List[Any]] = None) -> Optional[List[Any]]:
@@ -63,6 +68,7 @@ class QueryExecutor:
                 return QueryExecutor.__parse_results_many(cursor, result)
         finally:
             conn.close()
+            QueryExecutor.db.return_connection(conn)
 
     @staticmethod
     def update_one(query: str, params: Optional[List[Any]] = None) -> Optional[List[Any]]:
@@ -75,6 +81,7 @@ class QueryExecutor:
                 return QueryExecutor.__parse_result(cursor, result)
         finally:
             conn.close()
+            QueryExecutor.db.return_connection(conn)
 
     @staticmethod
     def update_many(query: str, params: Optional[List[Any]] = None) -> Optional[List[Any]]:
@@ -87,6 +94,7 @@ class QueryExecutor:
                 return QueryExecutor.__parse_results_many(cursor, result)
         finally:
             conn.close()
+            QueryExecutor.db.return_connection(conn)
 
     @staticmethod
     def delete_one(query: str, params: Optional[List[Any]] = None) -> None:
@@ -97,6 +105,7 @@ class QueryExecutor:
                 conn.commit()
         finally:
             conn.close()
+            QueryExecutor.db.return_connection(conn)
 
     @staticmethod
     def delete_many(query: str, params: Optional[List[Any]] = None) -> None:
@@ -107,6 +116,7 @@ class QueryExecutor:
                 conn.commit()
         finally:
             conn.close()
+            QueryExecutor.db.return_connection(conn)
 
     @staticmethod
     def execute(query: str, params: Optional[List[Any]] = None) -> None:
@@ -117,6 +127,7 @@ class QueryExecutor:
                 conn.commit()
         finally:
             conn.close()
+            QueryExecutor.db.return_connection(conn)
 
     @staticmethod
     def count(query: str, params: Optional[List[Any]] = None) -> int:
@@ -127,6 +138,7 @@ class QueryExecutor:
                 return cursor.rowcount
         finally:
             conn.close()
+            QueryExecutor.db.return_connection(conn)
 
     @staticmethod
     def __parse_result(cursor, result):

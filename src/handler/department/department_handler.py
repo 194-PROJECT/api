@@ -23,6 +23,10 @@ class DepartmentHandler:
         return DepartmentRepository.get_departments(limit, offset, order_by_clause, where_clause)
 
     @staticmethod
+    def get_department_count(where_clause: Optional[TextClause]) -> int:
+        return DepartmentRepository.get_department_count(where_clause)
+
+    @staticmethod
     def update_department(id: int, department: DepartmentDTO) -> Optional[DepartmentDTO]:
         return DepartmentRepository.update_department(id, department)
     

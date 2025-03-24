@@ -46,10 +46,30 @@ def get_equipments():
             errors=["Failed to retrieve any equipments"],
         )
 
+    equipment_count = EquipmentHandler.get_equipment_count(get_request.where_clause)
+
     return response(
         message="Equipments found",
         code=200,
-        data=[equipment.model_dump() for equipment in equipments]
+        data=[equipment.model_dump() for equipment in equipments],
+        page=get_request.page,
+        total_rows=equipment_count,
+    )
+
+@app.route('/equipment/count', methods=['GET'])
+def get_equipment_count():
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': Equipment,
+        'table_keys': EquipmentKeyEnum,
+        'key_types': EquipmentKeyTypes,
+    })
+
+    equipment_count = EquipmentHandler.get_equipment_count(get_request.where_clause)
+
+    return response(
+        message="Equipment count found",
+        code=200,
+        data=equipment_count
     )
 
 @app.route('/equipment', methods=['POST'])

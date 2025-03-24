@@ -23,6 +23,10 @@ class ClassHandler:
         return ClassRepository.get_classes(limit, offset, order_by_clause, where_clause)
 
     @staticmethod
+    def get_class_count(where_clause: Optional[str]) -> int:
+        return ClassRepository.get_class_count(where_clause)
+
+    @staticmethod
     def update_class(id: int, class_data: ClassDTO) -> Optional[ClassDTO]:
         return ClassRepository.update_class(id, class_data)
 

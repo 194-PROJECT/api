@@ -46,10 +46,30 @@ def get_departments():
             errors=["Failed to retrieve any departments"],
         )
 
+    department_count = DepartmentHandler.get_department_count(get_request.where_clause)
+
     return response(
         message="Departments found",
         code=200,
-        data=[department.model_dump() for department in departments]
+        data=[department.model_dump() for department in departments],
+        page=get_request.page,
+        total_rows=department_count,
+    )
+
+@app.route('/department/count', methods=['GET'])
+def get_department_count():
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': Department,
+        'table_keys': DepartmentKeyEnum,
+        'key_types': DepartmentKeyTypes,
+    })
+
+    department_count = DepartmentHandler.get_department_count(get_request.where_clause)
+
+    return response(
+        message="Department count found",
+        code=200,
+        data=department_count
     )
 
 @app.route('/department', methods=['POST'])

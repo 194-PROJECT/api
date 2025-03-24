@@ -21,6 +21,10 @@ class StudentHandler:
         return StudentRepository.get_students(limit, offset, order_by_clause, where_clause)
 
     @staticmethod
+    def get_student_count(where_clause: Optional[str]) -> int:
+        return StudentRepository.get_student_count(where_clause)
+
+    @staticmethod
     def update_student(id: int, student: StudentDTO) -> Optional[StudentDTO]:
         return StudentRepository.update_student(id, student)
 

@@ -46,10 +46,30 @@ def get_assets():
             errors=["Failed to retrieve any assets"],
         )
 
+    asset_count = AssetHandler.get_asset_count(get_request.where_clause)
+
     return response(
         message="Assets found",
         code=200,
-        data=[asset.model_dump() for asset in assets]
+        data=[asset.model_dump() for asset in assets],
+        page=get_request.page,
+        total_rows=asset_count,
+    )
+
+@app.route('/asset/count', methods=['GET'])
+def get_asset_count():
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': Asset,
+        'table_keys': AssetKeyEnum,
+        'key_types': AssetKeyTypes,
+    })
+
+    asset_count = AssetHandler.get_asset_count(get_request.where_clause)
+
+    return response(
+        message="Asset count found",
+        code=200,
+        data=asset_count
     )
 
 @app.route('/asset', methods=['POST'])

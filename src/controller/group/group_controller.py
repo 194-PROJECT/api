@@ -46,10 +46,30 @@ def get_groups():
             errors=["Failed to retrieve any groups"],
         )
 
+    group_count = GroupHandler.get_group_count(get_request.where_clause)
+
     return response(
         message="Groups found",
         code=200,
-        data=[group.model_dump() for group in groups]
+        data=[group.model_dump() for group in groups],
+        page=get_request.page,
+        total_rows=group_count,
+    )
+
+@app.route('/group/count', methods=['GET'])
+def get_group_count():
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': Group,
+        'table_keys': GroupKeyEnum,
+        'key_types': GroupKeyTypes,
+    })
+
+    group_count = GroupHandler.get_group_count(get_request.where_clause)
+
+    return response(
+        message="Group count found",
+        code=200,
+        data=group_count
     )
 
 @app.route('/group', methods=['POST'])

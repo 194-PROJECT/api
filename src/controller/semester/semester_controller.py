@@ -46,10 +46,30 @@ def get_semesters():
             errors=["Failed to retrieve any semesters"],
         )
 
+    semester_count = SemesterHandler.get_semester_count(get_request.where_clause)
+
     return response(
         message="Semesters found",
         code=200,
-        data=[semester.model_dump() for semester in semesters]
+        data=[semester.model_dump() for semester in semesters],
+        page=get_request.page,
+        total_rows=semester_count,
+    )
+
+@app.route('/semester/count', methods=['GET'])
+def get_semester_count():
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': Semester,
+        'table_keys': SemesterKeyEnum,
+        'key_types': SemesterKeyTypes,
+    })
+
+    semester_count = SemesterHandler.get_semester_count(get_request.where_clause)
+
+    return response(
+        message="Semester count found",
+        code=200,
+        data=semester_count
     )
 
 @app.route('/semester', methods=['POST'])

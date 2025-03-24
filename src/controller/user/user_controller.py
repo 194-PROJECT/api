@@ -1,4 +1,3 @@
-from webbrowser import get
 from flask import request
 from core import auth_helper
 from core.api import Api, GetModelRequest, response
@@ -44,8 +43,7 @@ def get_users():
     if not users or not len(users):
         return response(
             message="No users found",
-            code=200,
-            data=[],
+            code=404,
             errors=["Failed to retrieve any users"],
         )
 
@@ -61,12 +59,18 @@ def get_users():
 
 @app.route('/user/count', methods=['GET'])
 def get_user_count():
-    user_count = UserHandler.get_user_count()
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': User,
+        'table_keys': UserKeyEnum,
+        'key_types': UserKeyTypes,
+    })
+
+    user_count = UserHandler.get_user_count(get_request.where_clause)
 
     return response(
-        message="User count found",
+        message="Users count",
         code=200,
-        data=user_count
+        data=user_count,
     )
 
 @app.route('/user', methods=['POST'])

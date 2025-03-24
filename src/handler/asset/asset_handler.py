@@ -23,6 +23,10 @@ class AssetHandler:
         return AssetRepository.get_assets(limit, offset, order_by_clause, where_clause)
 
     @staticmethod
+    def get_asset_count(where_clause: Optional[str]) -> int:
+        return AssetRepository.get_asset_count(where_clause)
+
+    @staticmethod
     def update_asset(id: int, asset: AssetDTO) -> Optional[AssetDTO]:
         return AssetRepository.update_asset(id, asset)
 

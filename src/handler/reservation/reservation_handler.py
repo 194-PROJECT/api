@@ -21,6 +21,10 @@ class ReservationHandler:
         return ReservationRepository.get_reservations(limit, offset, order_by_clause, where_clause)
 
     @staticmethod
+    def get_reservation_count(where_clause: Optional[str]) -> int:
+        return ReservationRepository.get_reservation_count(where_clause)
+
+    @staticmethod
     def update_reservation(id: int, reservation: ReservationDTO) -> Optional[ReservationDTO]:
         return ReservationRepository.update_reservation(id, reservation)
 

@@ -23,6 +23,10 @@ class EquipmentHandler:
         return EquipmentRepository.get_equipments(limit, offset, order_by_clause, where_clause)
 
     @staticmethod
+    def get_equipment_count(where_clause: Optional[str]) -> int:
+        return EquipmentRepository.get_equipment_count(where_clause)
+
+    @staticmethod
     def update_equipment(id: int, equipment: EquipmentDTO) -> Optional[EquipmentDTO]:
         return EquipmentRepository.update_equipment(id, equipment)
     

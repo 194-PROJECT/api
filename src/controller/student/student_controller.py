@@ -46,10 +46,30 @@ def get_students():
             errors=["Failed to retrieve any students"],
         )
 
+    student_count = StudentHandler.get_student_count(get_request.where_clause)
+
     return response(
         message="Students found",
         code=200,
-        data=[student.model_dump() for student in students]
+        data=[student.model_dump() for student in students],
+        page=get_request.page,
+        total_rows=student_count,
+    )
+
+@app.route('/student/count', methods=['GET'])
+def get_student_count():
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': Student,
+        'table_keys': StudentKeyEnum,
+        'key_types': StudentKeyTypes,
+    })
+
+    student_count = StudentHandler.get_student_count(get_request.where_clause)
+
+    return response(
+        message="Student count found",
+        code=200,
+        data=student_count
     )
 
 @app.route('/student', methods=['POST'])

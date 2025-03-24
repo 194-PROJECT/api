@@ -60,6 +60,18 @@ class CourseRepository:
 
         data = QueryExecutor.fetch_all(str(query))
         return [CourseDTO(**course) for course in data] if data else None
+
+    @staticmethod
+    def get_course_count(where_clause: Optional[TextClause]) -> int:
+        query = f"""
+            SELECT COUNT({Course.__table__}.id) AS count
+            FROM {Course.__table__}
+        """
+        if where_clause is not None:
+            query = f"{query} WHERE {where_clause}"
+
+        data = QueryExecutor.fetch_one(str(query))
+        return data['count'] if data else 0
     
     @staticmethod
     def update_course(id: int, course: CourseDTO) -> Optional[CourseDTO]:

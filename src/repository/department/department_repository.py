@@ -59,6 +59,18 @@ class DepartmentRepository:
         return [DepartmentDTO(**department) for department in data] if data else None
 
     @staticmethod
+    def get_department_count(where_clause: Optional[TextClause]) -> int:
+        query = f"""
+            SELECT COUNT({Department.__table__}.id) AS count
+            FROM {Department.__table__}
+        """
+        if where_clause is not None:
+            query = f"{query} WHERE {where_clause}"
+
+        data = QueryExecutor.fetch_one(str(query))
+        return data['count'] if data else 0
+
+    @staticmethod
     def update_department(id: int, department: DepartmentDTO) -> Optional[DepartmentDTO]:
         query = (
             update(Department)

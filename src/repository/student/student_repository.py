@@ -60,6 +60,18 @@ class StudentRepository:
         return [StudentDTO(**student) for student in data] if data else None
     
     @staticmethod
+    def get_student_count(where_clause: Optional[TextClause]) -> int:
+        query = f"""
+            SELECT COUNT({Student.__table__}.id) AS count
+            FROM {Student.__table__}
+        """
+        if where_clause is not None:
+            query = f"{query} WHERE {where_clause}"
+
+        data = QueryExecutor.fetch_one(str(query))
+        return data['count'] if data else 0
+
+    @staticmethod
     def update_student(id: int, student: StudentDTO) -> StudentDTO:
         query = (
             update(Student)

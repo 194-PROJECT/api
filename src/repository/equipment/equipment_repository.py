@@ -60,6 +60,18 @@ class EquipmentRepository:
 
         data = QueryExecutor.fetch_all(str(query))
         return [EquipmentDTO(**equipment) for equipment in data] if data else None
+
+    @staticmethod
+    def get_equipment_count(where_clause: Optional[TextClause]) -> int:
+        query = f"""
+            SELECT COUNT({Equipment.__table__}.id) AS count
+            FROM {Equipment.__table__}
+        """
+        if where_clause is not None:
+            query = f"{query} WHERE {where_clause}"
+
+        data = QueryExecutor.fetch_one(str(query))
+        return data['count'] if data else 0
     
     @staticmethod
     def update_equipment(id: int, equipment: EquipmentDTO) -> Optional[EquipmentDTO]:

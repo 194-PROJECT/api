@@ -46,10 +46,30 @@ def get_courses():
             errors=["Failed to retrieve any courses"],
         )
 
+    course_count = CourseHandler.get_course_count(get_request.where_clause)
+
     return response(
         message="Courses found",
         code=200,
-        data=[course.model_dump() for course in courses]
+        data=[course.model_dump() for course in courses],
+        page=get_request.page,
+        total_rows=course_count,
+    )
+
+@app.route('/course/count', methods=['GET'])
+def get_course_count():
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': Course,
+        'table_keys': CourseKeyEnum,
+        'key_types': CourseKeyTypes,
+    })
+
+    course_count = CourseHandler.get_course_count(get_request.where_clause)
+
+    return response(
+        message="Course count found",
+        code=200,
+        data=course_count
     )
 
 @app.route('/course', methods=['POST'])

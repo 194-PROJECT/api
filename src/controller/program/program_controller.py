@@ -46,10 +46,30 @@ def get_programs():
             errors=["Failed to retrieve any programs"],
         )
 
+    program_count = ProgramHandler.get_program_count(get_request.where_clause)
+
     return response(
         message="Programs found",
         code=200,
-        data=[program.model_dump() for program in programs]
+        data=[program.model_dump() for program in programs],
+        page=get_request.page,
+        total_rows=program_count,
+    )
+
+@app.route('/program/count', methods=['GET'])
+def get_program_count():
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': Program,
+        'table_keys': ProgramKeyEnum,
+        'key_types': ProgramKeyTypes,
+    })
+
+    program_count = ProgramHandler.get_program_count(get_request.where_clause)
+
+    return response(
+        message="Program count found",
+        code=200,
+        data=program_count
     )
 
 @app.route('/program', methods=['POST'])

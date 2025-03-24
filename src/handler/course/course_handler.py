@@ -23,6 +23,10 @@ class CourseHandler:
         return CourseRepository.get_courses(limit, offset, order_by_clause, where_clause)
 
     @staticmethod
+    def get_course_count(where_clause: Optional[str]) -> int:
+        return CourseRepository.get_course_count(where_clause)
+
+    @staticmethod
     def update_course(id: int, course: CourseDTO) -> Optional[CourseDTO]:
         return CourseRepository.update_course(id, course)
 

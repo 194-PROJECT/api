@@ -46,10 +46,30 @@ def get_reservations():
             errors=["Failed to retrieve any reservations"],
         )
 
+    reservation_count = ReservationHandler.get_reservation_count(get_request.where_clause)
+
     return response(
         message="Reservations found",
         code=200,
-        data=[reservation.model_dump() for reservation in reservations]
+        data=[reservation.model_dump() for reservation in reservations],
+        page=get_request.page,
+        total_rows=reservation_count,
+    )
+
+@app.route('/reservation/count', methods=['GET'])
+def get_reservation_count():
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': Reservation,
+        'table_keys': ReservationKeyEnum,
+        'key_types': ReservationKeyTypes,
+    })
+
+    reservation_count = ReservationHandler.get_reservation_count(get_request.where_clause)
+
+    return response(
+        message="Reservation count found",
+        code=200,
+        data=reservation_count
     )
 
 @app.route('/reservation', methods=['POST'])

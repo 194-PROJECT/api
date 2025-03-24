@@ -46,10 +46,30 @@ def get_classes():
             errors=["Failed to retrieve any classes"],
         )
 
+    class_count = ClassHandler.get_class_count(get_request.where_clause)
+
     return response(
         message="Classes found",
         code=200,
-        data=[class_.model_dump() for class_ in classes]
+        data=[class_.model_dump() for class_ in classes],
+        page=get_request.page,
+        total_rows=class_count,
+    )
+
+@app.route('/class/count', methods=['GET'])
+def get_class_count():
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': Class,
+        'table_keys': ClassKeyEnum,
+        'key_types': ClassKeyTypes,
+    })
+
+    class_count = ClassHandler.get_class_count(get_request.where_clause)
+
+    return response(
+        message="Class count found",
+        code=200,
+        data=class_count
     )
 
 @app.route('/class', methods=['POST'])

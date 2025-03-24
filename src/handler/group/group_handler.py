@@ -23,6 +23,10 @@ class GroupHandler:
         return GroupRepository.get_groups(limit, offset, order_by_clause, where_clause)
     
     @staticmethod
+    def get_group_count(where_clause: Optional[str]) -> int:
+        return GroupRepository.get_group_count(where_clause)
+    
+    @staticmethod
     def update_group(id: int, group: GroupDTO) -> Optional[GroupDTO]:
         return GroupRepository.update_group(id, group)
     

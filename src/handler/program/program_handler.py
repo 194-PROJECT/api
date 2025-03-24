@@ -24,6 +24,10 @@ class ProgramHandler:
         return ProgramRepository.get_programs(limit, offset, order_by_clause, where_clause)
     
     @staticmethod
+    def get_program_count(where_clause: Optional[str]) -> int:
+        return ProgramRepository.get_program_count(where_clause)
+    
+    @staticmethod
     def update_program(id: int, program: ProgramDTO) -> Optional[ProgramDTO]:
         return ProgramRepository.update_program(id, program)
     

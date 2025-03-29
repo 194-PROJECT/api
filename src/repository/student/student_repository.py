@@ -33,6 +33,15 @@ class StudentRepository:
         )
         data = QueryExecutor.fetch_one(str(query))
         return StudentDTO(**data) if data else None
+
+    @staticmethod
+    def get_student_by_user_id(user_id: int) -> Optional[StudentDTO]:
+        query = select(Student).where(Student.user_id == user_id).compile(
+            compile_kwargs={"literal_binds": True},
+            dialect=postgresql.dialect(),
+        )
+        data = QueryExecutor.fetch_one(str(query))
+        return StudentDTO(**data) if data else None
     
     @staticmethod
     def get_students(

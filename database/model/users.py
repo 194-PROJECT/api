@@ -15,7 +15,7 @@ class User(Base):
     role = Column(String(255), index=True)
     profile_picture_url = Column(String(255))
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'To' Relationships
     student = orm.relationship("Student", back_populates="user")
     sessions = orm.relationship("Session", back_populates="user")

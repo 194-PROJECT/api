@@ -21,7 +21,7 @@ class Program(Base):
     program_duration = Column(Float)  # duration in years
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
     department = orm.relationship(Department, back_populates="programs", foreign_keys=[department_id])
     # 'To' Relationships

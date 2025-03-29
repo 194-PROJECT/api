@@ -12,7 +12,7 @@ class ClassSchedule(Base):
     start_time = Column(Time(timezone=True), nullable=False, index=True)
     end_time = Column(Time(timezone=True), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
     class_ = orm.relationship(Class, back_populates="class_schedules", foreign_keys=[class_id])
 

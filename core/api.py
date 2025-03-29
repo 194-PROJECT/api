@@ -1,8 +1,9 @@
 from datetime import datetime, time
 from enum import Enum
-from typing import Any, ClassVar, List, Optional, Self, Type, TypedDict
+from tkinter import W
+from typing import Any, ClassVar, List, Optional, Self, Type, TypedDict, Union
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator, model_validator
-from flask import Flask
+from flask import Flask, Request
 from sqlalchemy import TextClause
 from sqlalchemy.orm import DeclarativeBase
 
@@ -37,6 +38,8 @@ class SqlOperator(str, Enum):
     NOT_LIKE = 'NOT LIKE'
     IS_NULL = 'IS NULL'
     IS_NOT_NULL = 'IS NOT NULL'
+    IN = 'IN'
+    NOT_IN = 'NOT IN'
 
 class OrderDirection(str, Enum):
     ASC = 'ASC'
@@ -50,6 +53,8 @@ typeToSqlOperator: dict[Type,list[SqlOperator]] = {
         SqlOperator.NOT_LIKE,
         SqlOperator.IS_NULL,
         SqlOperator.IS_NOT_NULL,
+        SqlOperator.IN,
+        SqlOperator.NOT_IN,
     ],
     int: [
         SqlOperator.EQUALS,
@@ -60,6 +65,8 @@ typeToSqlOperator: dict[Type,list[SqlOperator]] = {
         SqlOperator.LESS_THAN_OR_EQUAL,
         SqlOperator.IS_NULL,
         SqlOperator.IS_NOT_NULL,
+        SqlOperator.IN,
+        SqlOperator.NOT_IN,
     ],
     float: [
         SqlOperator.EQUALS,
@@ -70,12 +77,16 @@ typeToSqlOperator: dict[Type,list[SqlOperator]] = {
         SqlOperator.LESS_THAN_OR_EQUAL,
         SqlOperator.IS_NULL,
         SqlOperator.IS_NOT_NULL,
+        SqlOperator.IN,
+        SqlOperator.NOT_IN,
     ],
     bool: [
         SqlOperator.EQUALS,
         SqlOperator.NOT_EQUALS,
         SqlOperator.IS_NULL,
         SqlOperator.IS_NOT_NULL,
+        SqlOperator.IN,
+        SqlOperator.NOT_IN,
     ],
     datetime: [
         SqlOperator.EQUALS,
@@ -86,6 +97,8 @@ typeToSqlOperator: dict[Type,list[SqlOperator]] = {
         SqlOperator.LESS_THAN_OR_EQUAL,
         SqlOperator.IS_NULL,
         SqlOperator.IS_NOT_NULL,
+        SqlOperator.IN,
+        SqlOperator.NOT_IN,
     ],
     time: [
         SqlOperator.EQUALS,
@@ -96,6 +109,8 @@ typeToSqlOperator: dict[Type,list[SqlOperator]] = {
         SqlOperator.LESS_THAN_OR_EQUAL,
         SqlOperator.IS_NULL,
         SqlOperator.IS_NOT_NULL,
+        SqlOperator.IN,
+        SqlOperator.NOT_IN,
     ]
 }
 
@@ -165,7 +180,7 @@ class GetModelRequest(GetRequest):
 
     field: Optional[str] = None
     operator: Optional[SqlOperator] = None
-    value: Optional[str] = None
+    value: Optional[Union[str, list[str]]] = None
     where_clause: Optional[TextClause] = None
 
     @model_validator(mode="after")
@@ -215,15 +230,24 @@ class GetModelRequest(GetRequest):
         try:
             expected_type = key_types[self.field]
             if issubclass(expected_type, (datetime, time, str)):
-                self.value = f"'{self.value}'"
+                if isinstance(self.value, list):
+                    self.value = [f"'{value}'" for value in self.value]
+                else:
+                    self.value = f"'{self.value}'"
             else:
-                self.value = expected_type(self.value)
+                if isinstance(self.value, list):
+                    self.value = [expected_type(value) for value in self.value]
+                else:
+                    self.value = expected_type(self.value)
         except (ValueError, TypeError) as e:
             print(e)
             return self
 
         if self.operator not in typeToSqlOperator[expected_type]:
             return self
+        
+        if self.operator in [SqlOperator.IN, SqlOperator.NOT_IN] and not isinstance(self.value, list):
+            self.value = [self.value]
 
         match self.operator:
             case SqlOperator.LIKE:
@@ -234,10 +258,26 @@ class GetModelRequest(GetRequest):
                 self.where_clause = TextClause(f"{self.field} {self.operator.value}")
             case SqlOperator.IS_NOT_NULL:
                 self.where_clause = TextClause(f"{self.field} {self.operator.value}")
+            case SqlOperator.IN:
+                self.where_clause = TextClause(f"{self.field} {self.operator.value} ({', '.join([str(v) for v in self.value])})")
+            case SqlOperator.NOT_IN:
+                self.where_clause = TextClause(f"{self.field} {self.operator.value} ({', '.join([str(v) for v in self.value])})")
             case _:
                 self.where_clause = TextClause(f"{self.field} {self.operator.value} {self.value}")
 
         return self
+
+def flatten_request_args(request: Request) -> dict[str, Any]:
+    """
+    Flattens the request arguments into a single dictionary.
+
+    Returns:
+        dict: A dictionary with flattened request arguments.
+    """
+    return {
+        key: value[0] if len(value) == 1 else value
+        for key, value in request.args.to_dict(flat=False).items()
+    }
 
 """
 These are the functions that are use to parse and return the response data.

@@ -14,7 +14,7 @@ class Asset(Base):
     price = Column(Float, nullable=False, index=True)
     purchased_by = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
     user = orm.relationship(User, back_populates="purchased_assets", foreign_keys=[purchased_by])
     # 'To' Relationships

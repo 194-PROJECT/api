@@ -8,11 +8,11 @@ class Student(Base):
     __tablename__ = 'student'
     
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True)
     program_id = Column(Integer, ForeignKey('program.id'), nullable=False, index=True)
     student_id = Column(String(255), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
     program = orm.relationship(Program, back_populates="students", foreign_keys=[program_id])
     user = orm.relationship(User, back_populates="student", foreign_keys=[user_id])

@@ -12,6 +12,10 @@ class StudentHandler:
         return StudentRepository.get_student(id)
 
     @staticmethod
+    def get_student_by_user_id(user_id: int) -> Optional[StudentDTO]:
+        return StudentRepository.get_student_by_user_id(user_id)
+
+    @staticmethod
     def get_students(
         limit: int,
         offset: int,

@@ -9,7 +9,7 @@ class Department(Base):
     name = Column(String(255), nullable=False, index=True)
     description = Column(String(255))
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'To' Relationships
     programs = orm.relationship("Program", back_populates="department")
 

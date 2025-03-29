@@ -13,7 +13,7 @@ class Course(Base):
     description = Column(String)
     credits = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
     program = orm.relationship(Program, back_populates="courses", foreign_keys=[program_id])
     prerequisite = orm.relationship("Course", remote_side=[id], backref="dependent_courses")

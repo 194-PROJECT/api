@@ -3,7 +3,10 @@ from core.api import Api, GetModelRequest, response
 
 from database.model.student import Student, StudentKeyEnum, StudentKeyTypes
 from src.dto.student.student_dto import StudentDTO
+from src.enum.user.user_role_enum import UserRoleEnum
+from src.enum.user.user_type_enum import UserTypeEnum
 from src.handler.student.student_handler import StudentHandler
+from src.handler.user.user_handler import UserHandler
 
 app = Api.application
 
@@ -75,6 +78,30 @@ def get_student_count():
 @app.route('/student', methods=['POST'])
 def create_student():
     student_data = StudentDTO(**request.json)
+    user = UserHandler.get_user(student_data.user_id)
+    student = StudentHandler.get_student_by_user_id(student_data.user_id)
+    
+    if student:
+        return response(
+            message="Student already exists",
+            code=400,
+            errors=["Cannot create student with a user that is already a student"],
+        )
+
+    if not user:
+        return response(
+            message="User not found",
+            code=404,
+            errors=["Cannot create student with a user that does not exist"],
+        )
+
+    if user.type == UserTypeEnum.STUDENT:
+        return response(
+            message="User already exists",
+            code=400,
+            errors=["Cannot create student with a user that is already a student"],
+        )
+    
     student = StudentHandler.create_student(student_data)
 
     if not student:
@@ -84,13 +111,18 @@ def create_student():
             errors=["Failed to create student with the provided data"],
         )
 
+    UserHandler.update_user(user.id, user.model_copy(update={
+        'type': UserTypeEnum.STUDENT,
+        'role': UserRoleEnum.USER,
+    }))
+
     return response(
         message=f"Student {student.id} created",
         code=201,
         data=student.model_dump()
     )
 
-@app.route('/student/<int:id>', methods=['PUT'])
+@app.route('/student/<int:id>', methods=['PATCH'])
 def update_student(id: int):
     student = StudentHandler.get_student(id)
 
@@ -122,6 +154,15 @@ def delete_student(id: int):
         )
     
     StudentHandler.delete_student(id)
+    
+    user = UserHandler.get_user(student.user_id)
+    
+    # If the user is a student, update their type and role to GUEST
+    if user and user.type == UserTypeEnum.STUDENT:
+        UserHandler.update_user(user.id, user.model_copy(update={
+            'type': UserTypeEnum.GUEST,
+            'role': UserHandler.user_type_to_role_map[UserTypeEnum.GUEST],
+        }))
     
     return response(
         message=f"Student {student.id} deleted",

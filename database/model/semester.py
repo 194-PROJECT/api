@@ -10,7 +10,7 @@ class Semester(Base):
     start_date = Column(Date, nullable=False, index=True)
     end_date = Column(Date, nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'To' Relationships
     classes = orm.relationship("Class", back_populates="semester")
 

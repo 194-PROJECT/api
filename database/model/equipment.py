@@ -12,7 +12,7 @@ class Equipment(Base):
     purchase_date = Column(Date, nullable=False, index=True)
     price = Column(Float, nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'To' Relationships
     reservation_equipments = orm.relationship("ReservationEquipment", back_populates="equipment")
     equipment_images = orm.relationship("EquipmentImage", back_populates="equipment")

@@ -2,9 +2,20 @@ from typing import List, Optional
 
 from sqlalchemy import TextClause
 from src.dto.user.user_dto import UserDTO
+from src.enum.user.user_role_enum import UserRoleEnum
+from src.enum.user.user_type_enum import UserTypeEnum
 from src.repository.user.user_repository import UserRepository
 
 class UserHandler:
+    user_type_to_role_map = {
+        UserTypeEnum.MANAGEMENT: UserRoleEnum.ADMIN,
+        UserTypeEnum.FACULTY: UserRoleEnum.ADMIN,
+        UserTypeEnum.STAFF: UserRoleEnum.ADMIN,
+        UserTypeEnum.GUEST: UserRoleEnum.GUEST,
+        UserTypeEnum.STUDENT: UserRoleEnum.USER,
+        UserTypeEnum.ALUMNI: UserRoleEnum.USER,
+    }
+
     @staticmethod
     def create_user(user: UserDTO) -> Optional[UserDTO]:
         return UserRepository.create_user(user)

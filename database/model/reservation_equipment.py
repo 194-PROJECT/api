@@ -14,7 +14,7 @@ class ReservationEquipment(Base):
     start_date = Column(DateTime(timezone=True), nullable=False, index=True)
     end_date = Column(DateTime(timezone=True), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
     reservation = orm.relationship(Reservation, back_populates="reservation_equipments")
     equipment = orm.relationship(Equipment, back_populates="reservation_equipments")

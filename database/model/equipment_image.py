@@ -9,7 +9,7 @@ class EquipmentImage(Base):
     equipment_id = Column(Integer, ForeignKey('equipment.id'), nullable=False, index=True)
     image_url = Column(String(255), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
     equipment = orm.relationship("Equipment", back_populates="equipment_images", foreign_keys=[equipment_id])
 

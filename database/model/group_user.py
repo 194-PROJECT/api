@@ -11,7 +11,7 @@ class GroupUser(Base):
     group_id = Column(Integer, ForeignKey('groups.id'), nullable=False, index=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
     group = orm.relationship(Group, back_populates="users", foreign_keys=[group_id])
     users = orm.relationship(User, back_populates="groups", foreign_keys=[user_id])

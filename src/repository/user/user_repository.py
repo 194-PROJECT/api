@@ -94,7 +94,6 @@ class UserRepository:
         if where_clause is not None:
             query = f"{query} WHERE {where_clause}"
 
-        print(query)
         data = QueryExecutor.fetch_one(str(query))
         return data['count'] if data else 0
 
@@ -110,6 +109,7 @@ class UserRepository:
                 last_name=user.last_name,
                 type=user.type,
                 role=user.role,
+                password=user.password,
             )
             .returning("*")
             .compile(

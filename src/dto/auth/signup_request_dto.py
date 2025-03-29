@@ -21,5 +21,7 @@ class SignupRequest(BaseModel):
     first_name: str
     last_name: str
     password: str
-    type: Optional[UserTypeEnum] = UserTypeEnum.GUEST
-    role: Optional[UserRoleEnum] = UserRoleEnum.GUEST
+    # Keeping these as optional since they will be auto-assigned based on
+    # the email domain. But they can be overridden if needed for some cases.
+    type: Optional[UserTypeEnum] = UserTypeEnum.STUDENT
+    role: Optional[UserRoleEnum] = UserRoleEnum.USER

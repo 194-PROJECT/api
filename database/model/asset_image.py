@@ -10,7 +10,7 @@ class AssetImage(Base):
     asset_id = Column(Integer, ForeignKey('asset.id'), nullable=False, index=True)
     image_url = Column(String(255), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
     asset = orm.relationship(Asset, back_populates="asset_images", foreign_keys=[asset_id])
 

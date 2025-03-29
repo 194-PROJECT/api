@@ -6,7 +6,7 @@ from database.model.student import Student
 from database.postgres.database import PostgresDatabase
 
 def generate_student_id():
-        return f"{randint(2000, 2100)}-{randint(0, 20000)}"
+        return f"{randint(2000, 2100)}-{str(randint(0, 20000)).zfill(5)}"
 
 class StudentFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:

@@ -1,9 +1,11 @@
 from flask import request
 from core import auth_helper
-from core.api import Api, GetModelRequest, response
+from core.api import Api, GetModelRequest, flatten_request_args, response
 
 from database.model.users import User, UserKeyEnum, UserKeyTypes
 from src.dto.user.user_dto import UserDTO
+from src.enum.user.user_type_enum import UserTypeEnum
+from src.handler.student.student_handler import StudentHandler
 from src.handler.user.user_handler import UserHandler
 
 app = Api.application
@@ -27,7 +29,7 @@ def get_user(id: int):
 
 @app.route('/user', methods=['GET'])
 def get_users():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': User,
         'table_keys': UserKeyEnum,
         'key_types': UserKeyTypes,
@@ -85,6 +87,7 @@ def create_user():
             errors=['Email or username already in use'],
         )
 
+    user_data.role = UserHandler.user_type_to_role_map[user_data.type]
     user_data.password = auth_helper.decrypt(user_data.password)
     user = UserHandler.create_user(user_data)
 
@@ -101,7 +104,7 @@ def create_user():
         data=user.model_dump(exclude=['password'])
     )
 
-@app.route('/user/<int:id>', methods=['PUT'])
+@app.route('/user/<int:id>', methods=['PATCH'])
 def update_user(id: int):
     user = UserHandler.get_user(id)
 
@@ -113,8 +116,27 @@ def update_user(id: int):
         )
 
     user_update_request = user.model_copy(update=request.json)
+    user_update_request.role = UserHandler.user_type_to_role_map[user_update_request.type]
+
+    if 'password' in request.json:
+        decrypted_password = auth_helper.decrypt(user_update_request.password)
+        user_update_request.password = auth_helper.hash_password(decrypted_password)
+
+    if user_update_request.type == UserTypeEnum.STUDENT and user.type != UserTypeEnum.STUDENT:
+        return response(
+            message="Cannot change user type to student",
+            code=400,
+            errors=["Use the student module to create a student"],
+        )
+
+    # If the user is a student and the type is changed to something else, delete the student
+    if user.type == UserTypeEnum.STUDENT and user_update_request.type != UserTypeEnum.STUDENT:
+        student = StudentHandler.get_student_by_user_id(user.id)
+        if student:
+            StudentHandler.delete_student(student.id)
+
     updated_user = UserHandler.update_user(id, user_update_request)
-    
+
     return response(
         message=f"User {updated_user.username} updated",
         code=200,

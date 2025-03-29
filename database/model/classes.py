@@ -9,13 +9,13 @@ class Class(Base):
     __tablename__ = 'classes' # keyword
 
     id = Column(Integer, primary_key=True, index=True)
-    course_id = Column(Integer, ForeignKey('course.id'), nullable=False, index=True)
-    instructor_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
-    semester_id = Column(Integer, ForeignKey('semester.id'), nullable=False, index=True)
+    course_id = Column(Integer, ForeignKey('course.id'), index=True)
+    instructor_id = Column(Integer, ForeignKey('users.id', ondelete='SET NULL'), index=True)
+    semester_id = Column(Integer, ForeignKey('semester.id', ondelete='SET NULL'), nullable=False, index=True)
     name = Column(String(255), nullable=False, index=True)
     description = Column(String(255))
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), onupdate=sql.func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
     course = orm.relationship(Course, back_populates="classes", foreign_keys=[course_id])
     instructor = orm.relationship(User, back_populates="instructed_classes", foreign_keys=[instructor_id])

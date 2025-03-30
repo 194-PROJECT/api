@@ -1,4 +1,4 @@
-# NOTE: Table names are in singular form, except for a few exceptions like 'users' and 'groups'
+# NOTE: Table names are in singular form, except for a few exceptions like 'users', 'groups', 'classes', etc.
 #       since these are reserved keywords in a lot of SQL databases.
 from .asset_image import AssetImage # noqa: F401
 from .asset import Asset # noqa: F401

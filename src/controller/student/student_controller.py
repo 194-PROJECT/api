@@ -111,7 +111,7 @@ def create_student():
             errors=["Failed to create student with the provided data"],
         )
 
-    UserHandler.update_user(user.id, user.model_copy(update={
+    UserHandler.update_user(user.id, user.model_validate(obj={
         'type': UserTypeEnum.STUDENT,
         'role': UserRoleEnum.USER,
     }))
@@ -159,7 +159,7 @@ def delete_student(id: int):
     
     # If the user is a student, update their type and role to GUEST
     if user and user.type == UserTypeEnum.STUDENT:
-        UserHandler.update_user(user.id, user.model_copy(update={
+        UserHandler.update_user(user.id, user.model_validate(obj={
             'type': UserTypeEnum.GUEST,
             'role': UserHandler.user_type_to_role_map[UserTypeEnum.GUEST],
         }))

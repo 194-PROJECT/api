@@ -13,5 +13,8 @@ def delete_all_database_tables():
         print(f"\033[92mTruncating table corresponding to database.model.{module_name}\033[0m")
         for name, obj in vars(module).items():
             if isinstance(obj, type) and hasattr(obj, '__table__'):
-                print(f"\033[91mTruncating table: {obj.__table__.name}\033[0m")
-                QueryExecutor.execute(f"TRUNCATE TABLE {obj.__table__.name} CASCADE")
+                if module_name == obj.__table__.name:
+                    query = f"TRUNCATE TABLE {obj.__table__.name} CASCADE"
+                    print(f"\033[91mTruncating table: {obj.__table__.name}\033[0m")
+                    QueryExecutor.execute(query)
+                

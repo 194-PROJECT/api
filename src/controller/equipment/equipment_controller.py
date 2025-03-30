@@ -90,7 +90,7 @@ def create_equipment():
         data=equipment.model_dump()
     )
 
-@app.route('/equipment/<int:id>', methods=['PUT'])
+@app.route('/equipment/<int:id>', methods=['PATCH'])
 def update_equipment(id: int):
     equipment = EquipmentHandler.get_equipment(id)
 
@@ -101,7 +101,7 @@ def update_equipment(id: int):
             errors=["Failed to retrieve the requested equipment for update"],
         )
 
-    equipment_update_request = equipment.model_copy(update=request.json)
+    equipment_update_request = equipment.model_validate(obj=request.json)
     updated_equipment = EquipmentHandler.update_equipment(id, equipment_update_request)
     
     return response(

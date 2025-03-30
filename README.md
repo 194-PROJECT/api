@@ -14,7 +14,7 @@ python -m venv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\Activate`
 
 # install dependencies
-pip install requirements.txt
+pip install .requirements
 ```
 
 ## Project Structure
@@ -62,7 +62,14 @@ POSTGRESQL_PORT=5432
 POSTGRESQL_DATABASE=item_scheduling
 POSTGRESQL_USER=postgres
 POSTGRESQL_PASSWORD=password
+
+SMTP_SERVER_ADDRESS=smtp.gmail.com
+SMTP_SERVER_PORT=587
+SMTP_SERVER_EMAIL=your_preferred_mail@gmail.com
+SMTP_SERVER_PASSWORD="YOUR_APP_PASSWORD"
 ```
+
+> Note: The `SMTP_SERVER_PASSWORD` should be an app password generated from your email provider. For Gmail, you can find instructions [here](myaccount.google.com/apppasswords).
 
 #### Schema and seeding
 

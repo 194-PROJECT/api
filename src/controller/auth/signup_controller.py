@@ -1,7 +1,6 @@
 import core.auth_helper as auth_helper
 from core.api import Api, response
 from flask import request
-from core.email_format import is_email_from_up
 from src.dto.auth.signup_request_dto import SignupRequest
 from src.dto.user.user_dto import UserDTO
 from src.dto.student.student_dto import StudentDTO
@@ -10,6 +9,7 @@ from src.enum.user.user_type_enum import UserTypeEnum
 from src.handler.auth.session_handler import SessionHandler
 from src.handler.student.student_handler import StudentHandler
 from src.handler.user.user_handler import UserHandler
+from utils.email_format import is_email_from_up
 
 app = Api.application
 

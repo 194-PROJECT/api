@@ -2,6 +2,7 @@ from flask import request
 from core import auth_helper
 from core.api import Api, GetModelRequest, flatten_request_args, response
 
+from core.email_service import EmailService
 from database.model.users import User, UserKeyEnum, UserKeyTypes
 from src.dto.user.user_dto import UserDTO
 from src.enum.user.user_type_enum import UserTypeEnum
@@ -76,7 +77,13 @@ def get_user_count():
     )
 
 @app.route('/user', methods=['POST'])
-def create_user():
+async def create_user():
+    """
+    Create a new user. This endpoint should only be accessible through admin.
+
+    Returns:
+        response: JSON response with the status of the request.
+    """
     user_data = UserDTO(**request.json)
     is_available = UserHandler.check_availability(user_data.email, user_data.username)
 
@@ -85,6 +92,13 @@ def create_user():
             message='Failed to create user',
             code=409,
             errors=['Email or username already in use'],
+        )
+
+    if user_data.type == UserTypeEnum.STUDENT:
+        return response(
+            message='Failed to create user',
+            code=400,
+            errors=['Students should be created through the student module after creating a user'],
         )
 
     user_data.role = UserHandler.user_type_to_role_map[user_data.type]
@@ -98,6 +112,23 @@ def create_user():
             errors=["Failed to create user with the provided data"],
         )
 
+    email_service = EmailService()
+    await email_service.send_email(
+        recipient_email=user.email,
+        subject="DGE UP - Account created",
+        body=f"""
+            Good day {user.first_name} {user.last_name},
+            
+            Your account has been created successfully.
+            You can now log in to the DGE UP platform using your credentials.
+
+            Your password is: {user_data.password}
+            
+            Regards,
+            DGE UP Team
+        """,
+    )
+
     return response(
         message=f"User {user.username} created",
         code=201,
@@ -105,7 +136,7 @@ def create_user():
     )
 
 @app.route('/user/<int:id>', methods=['PATCH'])
-def update_user(id: int):
+async def update_user(id: int):
     user = UserHandler.get_user(id)
 
     if not user:
@@ -117,10 +148,6 @@ def update_user(id: int):
 
     user_update_request = user.model_copy(update=request.json)
     user_update_request.role = UserHandler.user_type_to_role_map[user_update_request.type]
-
-    if 'password' in request.json:
-        decrypted_password = auth_helper.decrypt(user_update_request.password)
-        user_update_request.password = auth_helper.hash_password(decrypted_password)
 
     if user_update_request.type == UserTypeEnum.STUDENT and user.type != UserTypeEnum.STUDENT:
         return response(
@@ -134,6 +161,31 @@ def update_user(id: int):
         student = StudentHandler.get_student_by_user_id(user.id)
         if student:
             StudentHandler.delete_student(student.id)
+
+    # Check if the password is being updated notify the user.
+    # This is a security measure to ensure that the user is aware of the password change.
+    if (
+        'password' in request.json and
+        not auth_helper.verify_password(user_update_request.password, user.password)
+    ):
+        decrypted_password = auth_helper.decrypt(user_update_request.password)
+        user_update_request.password = auth_helper.hash_password(decrypted_password)
+        email_service = EmailService()
+        await email_service.send_email(
+            recipient_email=user.email,
+            subject="DGE UP - Password updated",
+            body=f"""
+                Good day {user.first_name} {user.last_name},
+                
+                Your password has been updated successfully.
+                You can now log in to the DGE UP platform using your credentials.
+
+                Your new password is: {decrypted_password}
+                
+                Regards,
+                DGE UP Team
+            """,
+        )
 
     updated_user = UserHandler.update_user(id, user_update_request)
 

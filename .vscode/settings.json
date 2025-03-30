@@ -1,5 +1,6 @@
 {
   "cSpell.words": [
+    "aiosmtplib",
     "autoflush",
     "backref",
     "closeall",
@@ -27,6 +28,8 @@
     "reltuples",
     "seealso",
     "sessionmaker",
+    "smtp",
+    "smtplib",
     "sqltype",
     "sqltypes",
     "supercede",

@@ -15,6 +15,7 @@ class EquipmentRepository:
                 name=equipment.name,
                 description=equipment.description,
                 category=equipment.category,
+                quantity=equipment.quantity,
                 purchase_date=equipment.purchase_date,
                 price=equipment.price,
             )
@@ -82,6 +83,7 @@ class EquipmentRepository:
                 name=equipment.name,
                 description=equipment.description,
                 category=equipment.category,
+                quantity=equipment.quantity,
                 purchase_date=equipment.purchase_date,
                 price=equipment.price,
             )

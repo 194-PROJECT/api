@@ -17,4 +17,3 @@ def delete_all_database_tables():
                     query = f"TRUNCATE TABLE {obj.__table__.name} CASCADE"
                     print(f"\033[91mTruncating table: {obj.__table__.name}\033[0m")
                     QueryExecutor.execute(query)
-                

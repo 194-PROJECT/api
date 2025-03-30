@@ -10,6 +10,8 @@ class ReservationFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_factory = PostgresDatabase.get_session
         sqlalchemy_session_persistence = 'commit'
 
+    start_date = factory.Faker('date_time_this_year')
+    end_date = factory.Faker('date_time_this_year')
     accepted = factory.Faker('boolean')
     returned = factory.Faker('boolean')
     reason = factory.Faker('sentence')

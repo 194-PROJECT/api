@@ -111,7 +111,7 @@ def create_student():
             errors=["Failed to create student with the provided data"],
         )
 
-    UserHandler.update_user(user.id, user.model_validate(obj={
+    UserHandler.update_user(user.id, user.model_copy(update={
         'type': UserTypeEnum.STUDENT,
         'role': UserRoleEnum.USER,
     }))

@@ -11,8 +11,6 @@ class ReservationEquipmentFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = 'commit'
 
     quantity = factory.Faker('random_int', min=1, max=10)
-    start_date = factory.Faker('date_time_this_year')
-    end_date = factory.Faker('date_time_this_year')
     created_at = factory.Faker('date_time_this_year')
     updated_at = factory.Faker('date_time_this_year')
     # Foreign key and relationship

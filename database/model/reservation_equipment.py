@@ -11,8 +11,6 @@ class ReservationEquipment(Base):
     reservation_id = Column(Integer, ForeignKey('reservation.id'), nullable=False, index=True)
     equipment_id = Column(Integer, ForeignKey('equipment.id'), nullable=False, index=True)
     quantity = Column(Integer, nullable=False)
-    start_date = Column(DateTime(timezone=True), nullable=False, index=True)
-    end_date = Column(DateTime(timezone=True), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships

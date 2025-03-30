@@ -11,6 +11,8 @@ class Reservation(Base):
     user_id = Column(Integer, ForeignKey('users.id', ondelete="SET NULL"), index=True)
     admin_id = Column(Integer, ForeignKey('users.id', ondelete="SET NULL"), index=True)
     group_id = Column(Integer, ForeignKey('groups.id', ondelete="SET NULL"), index=True)
+    start_date = Column(DateTime(timezone=True), nullable=False, index=True)
+    end_date = Column(DateTime(timezone=True), nullable=False, index=True)
     accepted = Column(Boolean, nullable=False, default=False, index=True)
     returned = Column(Boolean, nullable=False, default=False, index=True)
     reason = Column(String(255), nullable=False)

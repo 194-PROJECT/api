@@ -76,6 +76,14 @@ def get_reservation_count():
 def create_reservation():
     reservation_data = request.json
     reservation = ReservationDTO(**reservation_data)
+    
+    if reservation.start_date < reservation.end_date:
+        return response(
+            message="Invalid reservation dates",
+            code=400,
+            errors=["Start date must be before end date"],
+        )
+
     created_reservation = ReservationHandler.create_reservation(reservation)
     
     if not created_reservation:

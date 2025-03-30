@@ -5,8 +5,9 @@ from typing import Optional
 class EquipmentDTO(BaseModel):
     id: Optional[int] = 0
     name: str
-    description: Optional[str]
-    category: Optional[str]
+    description: str
+    category: str
+    quantity: int
     purchase_date: date
     price: float
     created_at: Optional[datetime] = datetime.now()

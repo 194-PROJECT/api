@@ -7,8 +7,9 @@ class Equipment(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False, index=True)
-    description = Column(String(255))
-    category = Column(String(255), index=True)
+    description = Column(String(255), nullable=False)
+    category = Column(String(255), nullable=False, index=True)
+    quantity = Column(Integer, nullable=False, index=True)
     purchase_date = Column(Date, nullable=False, index=True)
     price = Column(Float, nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)

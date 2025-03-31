@@ -7,7 +7,5 @@ class ReservationEquipmentDTO(BaseModel):
     reservation_id: int
     equipment_id: int
     quantity: int
-    start_date: datetime
-    end_date: datetime
     created_at: Optional[datetime] = datetime.now()
     updated_at: Optional[datetime] = datetime.now()

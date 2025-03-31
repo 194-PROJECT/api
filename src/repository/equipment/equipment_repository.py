@@ -1,3 +1,5 @@
+from database.model.reservation import Reservation
+from database.model.reservation_equipment import ReservationEquipment
 from database.postgres.query import QueryExecutor
 from database.model.equipment import Equipment
 from sqlalchemy import TextClause, delete, insert, select, update
@@ -5,6 +7,7 @@ from sqlalchemy.dialects import postgresql
 from typing import Optional
 
 from src.dto.equipment.equipment_dto import EquipmentDTO
+from src.dto.reservation.reservation_dto import ReservationDTO
 
 class EquipmentRepository:
     @staticmethod
@@ -73,6 +76,20 @@ class EquipmentRepository:
 
         data = QueryExecutor.fetch_one(str(query))
         return data['count'] if data else 0
+
+    @staticmethod
+    def get_equipment_reservations(id: int) -> Optional[list[ReservationDTO]]:
+        query = (
+            select(Reservation)
+            .join(ReservationEquipment, Reservation.id == ReservationEquipment.reservation_id)
+            .where(ReservationEquipment.equipment_id == id)
+            .compile(
+            compile_kwargs={"literal_binds": True},
+            dialect=postgresql.dialect(),
+            )
+        )
+        data = QueryExecutor.fetch_all(str(query))
+        return [ReservationDTO(**reservation) for reservation in data] if data else None
     
     @staticmethod
     def update_equipment(id: int, equipment: EquipmentDTO) -> Optional[EquipmentDTO]:

@@ -1,15 +1,17 @@
 from argparse import ArgumentParser
 from database.postgres.seeder import DataSeeder as PostgresDataSeeder
 
-default_exclude_models=[
-    "Program",
-    "Department",
-    "User",
-    "Group",
-    "Reservation",
-    "Equipment",
+default_exclude_models = [
     "Asset",
+    "AssetImage",
+    "Department",
+    "Equipment",
+    "EquipmentImage",
+    "Group",
+    "Program",
+    "ReservationEquipment",
     "Semester",
+    "User",
 ]
 
 def main(database, exclude_models=default_exclude_models):

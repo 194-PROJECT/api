@@ -72,6 +72,33 @@ def get_equipment_count():
         data=equipment_count
     )
 
+@app.route('/equipment/<int:id>/reservation', methods=['GET'])
+def get_equipment_reservations(id: int):
+    equipment = EquipmentHandler.get_equipment(id)
+
+    if not equipment:
+        return response(
+            message="Equipment not found",
+            code=404,
+            errors=["Failed to retrieve the requested equipment for reservations"],
+        )
+
+    reservations = EquipmentHandler.get_equipment_reservations(id)
+
+    if not reservations or not len(reservations):
+        return response(
+            message="No reservations found for the equipment",
+            code=200,
+            data=[],
+            errors=["Failed to retrieve any reservations for the equipment"],
+        )
+
+    return response(
+        message=f"Reservations for Equipment {equipment.name} found",
+        code=200,
+        data=[reservation.model_dump() for reservation in reservations],
+    )
+
 @app.route('/equipment', methods=['POST'])
 def create_equipment():
     equipment_data = EquipmentDTO(**request.json)

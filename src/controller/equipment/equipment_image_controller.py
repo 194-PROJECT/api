@@ -6,7 +6,24 @@ from src.handler.equipment.equipment_image_handler import EquipmentImageHandler
 
 app = Api.application
 
-@app.route('/equipment/<int:equipment_id>/images', methods=['GET'])
+@app.route('/equipment/image/<int:id>', methods=['GET'])
+def get_equipment_image(id: int):
+    image = EquipmentImageHandler.get_image(id)
+
+    if not image:
+        return response(
+            message="Image not found",
+            code=404,
+            errors=["Failed to retrieve the requested image"],
+        )
+
+    return response(
+        message="Image found",
+        code=200,
+        data=image.model_dump()
+    )
+
+@app.route('/equipment/<int:equipment_id>/image', methods=['GET'])
 def get_equipment_images(equipment_id: int):
     images = EquipmentImageHandler.get_images_by_equipment_id(equipment_id)
 
@@ -23,7 +40,7 @@ def get_equipment_images(equipment_id: int):
         data=[image.model_dump() for image in images]
     )
 
-@app.route('/equipment/<int:equipment_id>/images', methods=['POST'])
+@app.route('/equipment/<int:equipment_id>/image', methods=['POST'])
 def add_equipment_image(equipment_id: int):
     image_data = EquipmentImageDTO(**request.json)
     image_data.equipment_id = equipment_id
@@ -42,7 +59,7 @@ def add_equipment_image(equipment_id: int):
         data=image.model_dump()
     )
 
-@app.route('/equipment/images/<int:image_id>', methods=['DELETE'])
+@app.route('/equipment/image/<int:image_id>', methods=['DELETE'])
 def delete_equipment_image(image_id: int):
     image = EquipmentImageHandler.get_image(image_id)
 

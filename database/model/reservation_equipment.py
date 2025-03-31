@@ -1,5 +1,5 @@
 from enum import Enum
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, sql, orm
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, sql, orm
 from core.db_model import Base
 from database.model.equipment import Equipment
 from database.model.reservation import Reservation
@@ -11,6 +11,8 @@ class ReservationEquipment(Base):
     reservation_id = Column(Integer, ForeignKey('reservation.id'), nullable=False, index=True)
     equipment_id = Column(Integer, ForeignKey('equipment.id'), nullable=False, index=True)
     quantity = Column(Integer, nullable=False)
+    returned = Column(Boolean, nullable=False, default=False)
+    mishandled = Column(Boolean, nullable=False, default=False)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships

@@ -1,6 +1,8 @@
 import factory
 # from database.factory.equipment_availability_factory import EquipmentAvailabilityFactory
 # from database.factory.equipment_image_factory import EquipmentImageFactory
+from database.factory.equipment_image_factory import EquipmentImageFactory
+from database.factory.reservation_equipment_factory import ReservationEquipmentFactory
 from database.model.equipment import Equipment
 from database.postgres.database import PostgresDatabase
 
@@ -10,26 +12,26 @@ names = (
     'Stapler', 'Paper Clips', 'Highlighter', 'Glue Stick', 'Scissors'
 )
 name_to_description = {
-    'Laptop': 'A portable computer for personal use.',
-    'Projector': 'A device that projects images or videos onto a screen.',
-    'Whiteboard': 'A smooth white surface for writing or drawing.',
-    'Printer': 'A device that prints documents and images.',
-    'Scanner': 'A device that converts physical documents into digital format.',
-    'Tablet': 'A portable touchscreen computer.',
-    'Camera': 'A device for capturing images or videos.',
-    'Monitor': 'A screen for displaying computer output.',
-    'Keyboard': 'An input device for typing.',
-    'Mouse': 'A pointing device for computer navigation.',
-    'Notebook': 'A small book for writing notes.',
-    'Pen': 'A tool for writing with ink.',
-    'Eraser': 'An item used to remove pencil marks.',
-    'Ruler': 'A tool for measuring and drawing straight lines.',
-    'Marker': 'A pen with a broad tip for marking.',
-    'Stapler': 'A device for fastening papers together.',
-    'Paper Clips': 'Small devices for holding sheets of paper together.',
-    'Highlighter': 'A pen for marking text with translucent color.',
-    'Glue Stick': 'A solid adhesive in a twistable tube.',
-    'Scissors': 'A tool for cutting paper or other materials.',
+    'Laptop': 'A portable computer designed for personal use, equipped with a screen, keyboard, and various hardware components to perform a wide range of tasks efficiently.',
+    'Projector': 'A device that projects images, videos, or presentations onto a large screen or surface, commonly used in classrooms, offices, and home theaters.',
+    'Whiteboard': 'A smooth, glossy white surface used for writing or drawing with erasable markers, often found in classrooms, offices, and meeting rooms.',
+    'Printer': 'A machine that produces physical copies of digital documents or images on paper, widely used in homes, schools, and businesses.',
+    'Scanner': 'An electronic device that converts physical documents, photos, or objects into digital format for storage, editing, or sharing.',
+    'Tablet': 'A portable touchscreen device that combines the functionality of a smartphone and a laptop, ideal for browsing, reading, and entertainment.',
+    'Camera': 'A device used for capturing high-quality images or videos, available in various types such as digital, DSLR, or mirrorless cameras.',
+    'Monitor': 'A display screen that shows visual output from a computer or other devices, available in various sizes and resolutions for different purposes.',
+    'Keyboard': 'An input device featuring a set of keys for typing text, executing commands, and interacting with computers or other electronic devices.',
+    'Mouse': 'A handheld pointing device used to navigate and interact with graphical user interfaces on a computer screen, often equipped with buttons and a scroll wheel.',
+    'Notebook': 'A small, portable book with blank or lined pages, commonly used for jotting down notes, ideas, or sketches.',
+    'Pen': 'A writing instrument that uses ink to create marks on paper, available in various styles such as ballpoint, fountain, or gel pens.',
+    'Eraser': 'A small tool made of rubber or similar material, designed to remove pencil marks from paper or other surfaces.',
+    'Ruler': 'A straight-edged tool marked with measurements, used for drawing straight lines or measuring lengths accurately.',
+    'Marker': 'A pen with a broad, felt tip that produces bold, colorful marks, often used for labeling, highlighting, or artistic purposes.',
+    'Stapler': 'A mechanical device used to fasten sheets of paper together by driving metal staples through them, commonly found in offices and schools.',
+    'Paper Clips': 'Small, metal or plastic devices used to hold sheets of paper together temporarily without causing damage.',
+    'Highlighter': 'A pen filled with translucent, brightly colored ink, used to emphasize or mark important text in books, documents, or notes.',
+    'Glue Stick': 'A solid adhesive packaged in a twistable tube, used for bonding paper, cardboard, or other lightweight materials in crafts and projects.',
+    'Scissors': 'A handheld tool with two sharp blades, pivoted together, used for cutting paper, fabric, or other materials with precision.',
 }
 name_to_category = {
     'Laptop': 'electronic',
@@ -66,8 +68,18 @@ class EquipmentFactory(factory.alchemy.SQLAlchemyModelFactory):
     quantity = factory.Faker('random_int', min=1, max=10)
     purchase_date = factory.Faker('date_time_this_year')
     price = factory.Faker('pyfloat', positive=True, right_digits=2, min_value=100, max_value=1000)
+    purchased_by = factory.Faker('name')
     created_at = factory.Faker('date_time_this_year')
     updated_at = factory.Faker('date_time_this_year')
     # Foreign key and relationship
-    # equipment_images = factory.RelatedFactoryList(EquipmentImageFactory, size=5)
+    equipment_images = factory.RelatedFactoryList(
+        EquipmentImageFactory,
+        size=5,
+        factory_related_name='equipment'
+    )
+    reservation_equipments = factory.RelatedFactoryList(
+        ReservationEquipmentFactory,
+        size=10,
+        factory_related_name='equipment'
+    )
     # equipment_availabilities = factory.RelatedFactoryList(EquipmentAvailabilityFactory, size=5)

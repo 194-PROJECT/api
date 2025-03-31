@@ -11,6 +11,7 @@ class Equipment(Base):
     category = Column(String(255), nullable=False, index=True)
     quantity = Column(Integer, nullable=False, index=True)
     purchase_date = Column(Date, nullable=False, index=True)
+    purchased_by = Column(String(255), index=True)
     price = Column(Float, nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())

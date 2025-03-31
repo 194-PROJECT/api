@@ -17,7 +17,13 @@ class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')
     password = factory.LazyFunction(lambda: auth_helper.hash_password('password'))
-    type = factory.LazyFunction(lambda: choice(list(UserTypeEnum)))
+    type = factory.LazyFunction(lambda: choice([
+                                                UserTypeEnum.MANAGEMENT,
+                                                UserTypeEnum.FACULTY,
+                                                UserTypeEnum.STAFF,
+                                                UserTypeEnum.GUEST,
+                                                UserTypeEnum.ALUMNI
+                                            ]))
     role = factory.LazyAttribute(lambda obj: UserHandler.user_type_to_role_map[obj.type])
     profile_picture_url = factory.Faker('image_url')
     created_at = factory.Faker('date_time_this_year')

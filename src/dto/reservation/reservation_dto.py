@@ -9,8 +9,8 @@ class ReservationDTO(BaseModel):
     group_id: Optional[int]
     start_date: datetime
     end_date: datetime
-    accepted: bool = False
-    returned: bool = False
+    accepted: Optional[bool] = None
+    returned: Optional[bool] = None
     reason: str
     admin_note: Optional[str]
     return_note: Optional[str]

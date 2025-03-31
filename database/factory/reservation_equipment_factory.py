@@ -1,6 +1,4 @@
 import factory
-from database.factory.reservation_factory import ReservationFactory
-from database.factory.equipment_factory import EquipmentFactory
 from database.model.reservation_equipment import ReservationEquipment
 from database.postgres.database import PostgresDatabase
 
@@ -14,5 +12,5 @@ class ReservationEquipmentFactory(factory.alchemy.SQLAlchemyModelFactory):
     created_at = factory.Faker('date_time_this_year')
     updated_at = factory.Faker('date_time_this_year')
     # Foreign key and relationship
-    reservation = factory.SubFactory(ReservationFactory)
-    equipment = factory.SubFactory(EquipmentFactory)
+    reservation = factory.SubFactory('database.factory.reservation_factory.ReservationFactory')
+    equipment = factory.SubFactory('database.factory.equipment_factory.EquipmentFactory')

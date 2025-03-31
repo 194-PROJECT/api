@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from sqlalchemy import TextClause
 from src.dto.equipment.equipment_dto import EquipmentDTO
+from src.dto.reservation.reservation_dto import ReservationDTO
 from src.repository.equipment.equipment_repository import EquipmentRepository
 
 class EquipmentHandler:
@@ -21,6 +22,10 @@ class EquipmentHandler:
         where_clause: Optional[TextClause]
     ) -> Optional[list[EquipmentDTO]]:
         return EquipmentRepository.get_equipments(limit, offset, order_by_clause, where_clause)
+
+    @staticmethod
+    def get_equipment_reservations(id: int) -> Optional[list[ReservationDTO]]:
+        return EquipmentRepository.get_equipment_reservations(id)
 
     @staticmethod
     def get_equipment_count(where_clause: Optional[str]) -> int:

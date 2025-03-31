@@ -1,7 +1,6 @@
 from enum import Enum
-from sqlalchemy import Column, Date, DateTime, Float, ForeignKey, Integer, String, sql, orm
+from sqlalchemy import Column, Date, DateTime, Float, Integer, String, sql, orm
 from core.db_model import Base
-from database.model.users import User
 
 class Asset(Base):
     __tablename__ = 'asset'
@@ -12,11 +11,9 @@ class Asset(Base):
     category = Column(String(255), index=True)
     purchase_date = Column(Date, nullable=False, index=True)
     price = Column(Float, nullable=False, index=True)
-    purchased_by = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
+    purchased_by = Column(String(255), index=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
-    # 'From' Relationships
-    user = orm.relationship(User, back_populates="purchased_assets", foreign_keys=[purchased_by])
     # 'To' Relationships
     asset_images = orm.relationship("AssetImage", back_populates="asset")
 

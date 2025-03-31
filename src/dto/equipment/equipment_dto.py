@@ -9,6 +9,7 @@ class EquipmentDTO(BaseModel):
     category: str
     quantity: int
     purchase_date: date
+    purchased_by: Optional[str] = None
     price: float
     created_at: Optional[datetime] = datetime.now()
     updated_at: Optional[datetime] = datetime.now()

@@ -1,5 +1,4 @@
 import factory
-from database.factory.asset_factory import AssetFactory
 from database.model.asset_image import AssetImage
 from database.postgres.database import PostgresDatabase
 
@@ -18,4 +17,4 @@ class AssetImageFactory(factory.alchemy.SQLAlchemyModelFactory):
     created_at = factory.Faker('date_time_this_year')
     updated_at = factory.Faker('date_time_this_year')
     # Foreign key and relationship
-    asset = factory.SubFactory(AssetFactory)
+    asset = factory.SubFactory('database.factory.asset_factory.AssetFactory')

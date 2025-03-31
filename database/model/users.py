@@ -22,7 +22,6 @@ class User(Base):
     instructed_classes = orm.relationship("Class", back_populates="instructor")
     reservations = orm.relationship("Reservation", back_populates="user", foreign_keys="Reservation.user_id")
     reservations_checked_by = orm.relationship("Reservation", back_populates="admin", foreign_keys="Reservation.admin_id")
-    purchased_assets = orm.relationship("Asset", back_populates="user")
     groups = orm.relationship("GroupUser", back_populates="users")
 
 UserKeyEnum = Enum('UserKeyEnum', {

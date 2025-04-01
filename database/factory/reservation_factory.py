@@ -14,7 +14,7 @@ class ReservationFactory(factory.alchemy.SQLAlchemyModelFactory):
     end_date = factory.Faker('date_time_this_year')
     accepted = factory.Faker('boolean')
     returned = factory.Faker('boolean')
-    reason = factory.Faker('sentence')
+    reason = factory.Faker('sentence', nb_words=12, variable_nb_words=True)
     admin_note = factory.Faker('sentence')
     return_note = factory.Faker('sentence')
     return_date = factory.Faker('date_time_this_year')

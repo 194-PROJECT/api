@@ -6,7 +6,7 @@ class EquipmentImage(Base):
     __tablename__ = 'equipment_image'
 
     id = Column(Integer, primary_key=True, index=True)
-    equipment_id = Column(Integer, ForeignKey('equipment.id'), nullable=False, index=True)
+    equipment_id = Column(Integer, ForeignKey('equipment.id', ondelete='CASCADE'), nullable=False, index=True)
     image_url = Column(String(255), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())

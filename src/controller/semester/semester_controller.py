@@ -90,7 +90,7 @@ def create_semester():
         data=semester.model_dump()
     )
 
-@app.route('/semester/<int:id>', methods=['PUT'])
+@app.route('/semester/<int:id>', methods=['PATCH'])
 def update_semester(id: int):
     semester = SemesterHandler.get_semester(id)
 

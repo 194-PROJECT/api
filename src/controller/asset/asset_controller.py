@@ -90,7 +90,7 @@ def create_asset():
         data=new_asset.model_dump()
     )
 
-@app.route('/asset/<int:id>', methods=['PUT'])
+@app.route('/asset/<int:id>', methods=['PATCH'])
 def update_asset(id: int):
     asset = AssetHandler.get_asset(id)
 

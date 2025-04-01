@@ -9,10 +9,11 @@ class ReservationEquipment(Base):
     
     id = Column(Integer, primary_key=True)
     reservation_id = Column(Integer, ForeignKey('reservation.id'), nullable=False, index=True)
-    equipment_id = Column(Integer, ForeignKey('equipment.id'), nullable=False, index=True)
+    equipment_id = Column(Integer, ForeignKey('equipment.id', ondelete='SET NULL'), index=True)
     quantity = Column(Integer, nullable=False)
-    returned = Column(Boolean, nullable=False, default=False)
-    mishandled = Column(Boolean, nullable=False, default=False)
+    returned = Column(Boolean, default=False)
+    returned_quantity = Column(Integer, nullable=True)
+    mishandled = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships

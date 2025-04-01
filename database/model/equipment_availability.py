@@ -7,7 +7,7 @@ class EquipmentAvailability(Base):
     __tablename__ = 'equipment_availability'
     
     id = Column(Integer, primary_key=True, index=True)
-    equipment_id = Column(Integer, ForeignKey('equipment.id'), nullable=False, index=True)
+    equipment_id = Column(Integer, ForeignKey('equipment.id', ondelete='CASCADE'), nullable=False, index=True)
     day = Column(String(10), nullable=False, index=True)
     start_time = Column(Time(timezone=True), nullable=False, index=True)
     end_time = Column(Time(timezone=True), nullable=False, index=True)

@@ -1,8 +1,8 @@
 from datetime import datetime, time
-from pydantic import BaseModel
+from core.dto_base import DTO
 from typing import Optional
 
-class EquipmentAvailabilityDTO(BaseModel):
+class EquipmentAvailabilityDTO(DTO):
     id: Optional[int] = 0
     equipment_id: int
     day: str

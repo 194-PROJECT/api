@@ -2,6 +2,7 @@ from flask import request
 from core.api import Api, GetModelRequest, response
 
 from database.model.equipment import Equipment, EquipmentKeyEnum, EquipmentKeyTypes
+from database.model.reservation import Reservation, ReservationKeyEnum, ReservationKeyTypes
 from src.dto.equipment.equipment_dto import EquipmentDTO
 from src.handler.equipment.equipment_handler import EquipmentHandler
 
@@ -74,16 +75,28 @@ def get_equipment_count():
 
 @app.route('/equipment/<int:id>/reservation', methods=['GET'])
 def get_equipment_reservations(id: int):
+    get_request = GetModelRequest.model_validate(dict(request.args), context={
+        'model': Reservation,
+        'table_keys': ReservationKeyEnum,
+        'key_types': ReservationKeyTypes,
+    })
+
     equipment = EquipmentHandler.get_equipment(id)
 
     if not equipment:
         return response(
             message="Equipment not found",
             code=404,
-            errors=["Failed to retrieve the requested equipment for reservations"],
+            errors=["Failed to retrieve the requested reservations for equipment"],
         )
 
-    reservations = EquipmentHandler.get_equipment_reservations(id)
+    reservations = EquipmentHandler.get_equipment_reservations(
+        id=id,
+        limit=get_request.limit,
+        offset=get_request.offset,
+        order_by_clause=get_request.order_by_clause,
+        where_clause=get_request.where_clause,
+    )
 
     if not reservations or not len(reservations):
         return response(

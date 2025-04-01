@@ -1,10 +1,11 @@
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import EmailStr
+from core.dto_base import DTO
 
 from src.enum.user.user_type_enum import UserTypeEnum
 from src.enum.user.user_role_enum import UserRoleEnum
 
-class SignupRequest(BaseModel):
+class SignupRequest(DTO):
     """
     This class is used to validate the request body of the signup endpoint.
     Since this is going to be used to create the user, a lot of the fields

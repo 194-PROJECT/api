@@ -125,7 +125,7 @@ class GetRequest(BaseModel):
     LIMIT_MAX_VALUE: ClassVar[int] = 1000
 
     id: Optional[int] = None
-    limit: Optional[int] = 100
+    limit: Optional[int] = None
     offset: Optional[int] = None
     page: Optional[int] = None
     page_size: Optional[int] = None
@@ -141,7 +141,7 @@ class GetRequest(BaseModel):
     @field_validator("offset", mode="after")
     @classmethod
     def validate_offset(cls, value: int):
-        return max([value, 0])
+        return max([value, 0]) if value else None
 
     @model_validator(mode="after")
     def page_from_limit(self, info: ValidationInfo) -> Self:
@@ -219,6 +219,13 @@ class GetModelRequest(GetRequest):
             return self
 
         key_types: dict[str, Type] = dict[str, Type](info.context['key_types'])
+        model = info.context['model']
+
+        if type(key_types) is not dict:
+            raise ValueError("The order_by context must be an Enum")
+
+        if not issubclass(model, DeclarativeBase):
+            raise ValueError("The model context must be a SingletonBase subclass")
         
         if not isinstance(key_types, dict):
             raise ValueError("The where context must be a dictionary of field types")
@@ -252,22 +259,24 @@ class GetModelRequest(GetRequest):
         
         if self.operator in [SqlOperator.IN, SqlOperator.NOT_IN] and not isinstance(self.value, list):
             self.value = [self.value]
+            
+        print({model.__table__})
 
         match self.operator:
             case SqlOperator.LIKE:
-                self.where_clause = TextClause(f"{self.field} {self.operator.value} '%{self.value.replace('\'', '')}%'")
+                self.where_clause = TextClause(f"{model.__table__}.{self.field} {self.operator.value} '%{self.value.replace('\'', '')}%'")
             case SqlOperator.NOT_LIKE:
-                self.where_clause = TextClause(f"{self.field} {self.operator.value} '%{self.value.replace('\'', '')}%'")
+                self.where_clause = TextClause(f"{model.__table__}.{self.field} {self.operator.value} '%{self.value.replace('\'', '')}%'")
             case SqlOperator.IS_NULL:
-                self.where_clause = TextClause(f"{self.field} {self.operator.value}")
+                self.where_clause = TextClause(f"{model.__table__}.{self.field} {self.operator.value}")
             case SqlOperator.IS_NOT_NULL:
-                self.where_clause = TextClause(f"{self.field} {self.operator.value}")
+                self.where_clause = TextClause(f"{model.__table__}.{self.field} {self.operator.value}")
             case SqlOperator.IN:
-                self.where_clause = TextClause(f"{self.field} {self.operator.value} ({', '.join([str(v) for v in self.value])})")
+                self.where_clause = TextClause(f"{model.__table__}.{self.field} {self.operator.value} ({', '.join([str(v) for v in self.value])})")
             case SqlOperator.NOT_IN:
-                self.where_clause = TextClause(f"{self.field} {self.operator.value} ({', '.join([str(v) for v in self.value])})")
+                self.where_clause = TextClause(f"{model.__table__}.{self.field} {self.operator.value} ({', '.join([str(v) for v in self.value])})")
             case _:
-                self.where_clause = TextClause(f"{self.field} {self.operator.value} {self.value}")
+                self.where_clause = TextClause(f"{model.__table__}.{self.field} {self.operator.value} {self.value}")
 
         return self
 

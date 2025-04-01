@@ -90,7 +90,7 @@ def create_group():
         data=group.model_dump()
     )
 
-@app.route('/group/<int:id>', methods=['PUT'])
+@app.route('/group/<int:id>', methods=['PATCH'])
 def update_group(id: int):
     group = GroupHandler.get_group(id)
 

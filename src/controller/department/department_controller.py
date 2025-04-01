@@ -90,7 +90,7 @@ def create_department():
         data=department.model_dump()
     )
 
-@app.route('/department/<int:id>', methods=['PUT'])
+@app.route('/department/<int:id>', methods=['PATCH'])
 def update_department(id: int):
     department = DepartmentHandler.get_department(id)
 

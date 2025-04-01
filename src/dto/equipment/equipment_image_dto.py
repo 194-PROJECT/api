@@ -1,8 +1,8 @@
 from datetime import datetime
-from pydantic import BaseModel
+from core.dto_base import DTO
 from typing import Optional
 
-class EquipmentImageDTO(BaseModel):
+class EquipmentImageDTO(DTO):
     id: Optional[int] = 0
     equipment_id: int
     image_url: str

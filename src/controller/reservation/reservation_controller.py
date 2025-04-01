@@ -99,7 +99,7 @@ def create_reservation():
         data=created_reservation.model_dump()
     )
 
-@app.route('/reservation/<int:id>', methods=['PUT'])
+@app.route('/reservation/<int:id>', methods=['PATCH'])
 def update_reservation(id: int):
     reservation = ReservationHandler.get_reservation(id)
 
@@ -110,7 +110,7 @@ def update_reservation(id: int):
             errors=["Cannot update reservation that does not exist"],
         )
 
-    reservation_update_request = reservation.model_copy(update=request.json)
+    reservation_update_request = reservation.update(request.json)
     updated_reservation = ReservationHandler.update_reservation(id, reservation_update_request)
     
     return response(

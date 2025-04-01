@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, model_validator
+from pydantic import model_validator
+from core.dto_base import DTO
 from typing_extensions import Self
 
-class Session(BaseModel):
+class Session(DTO):
     id: int
     user_id: int
     token: str

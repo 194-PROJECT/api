@@ -90,7 +90,7 @@ def create_program():
         data=program.model_dump()
     )
 
-@app.route('/program/<int:id>', methods=['PUT'])
+@app.route('/program/<int:id>', methods=['PATCH'])
 def update_program(id: int):
     program = ProgramHandler.get_program(id)
 

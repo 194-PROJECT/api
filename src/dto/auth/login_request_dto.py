@@ -1,8 +1,9 @@
 from typing import Optional
-from pydantic import BaseModel, EmailStr, model_validator
+from pydantic import EmailStr, model_validator
+from core.dto_base import DTO
 from typing_extensions import Self
 
-class LoginRequest(BaseModel):
+class LoginRequest(DTO):
     email: Optional[EmailStr] = None
     username: Optional[str] = None
     password: str

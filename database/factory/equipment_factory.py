@@ -5,6 +5,7 @@ from database.factory.equipment_image_factory import EquipmentImageFactory
 from database.factory.reservation_equipment_factory import ReservationEquipmentFactory
 from database.model.equipment import Equipment
 from database.postgres.database import PostgresDatabase
+from src.enum.equipment.equipment_category_enum import EquipmentCategoryEnum
 
 names = (
     'Laptop', 'Projector', 'Whiteboard', 'Printer', 'Scanner', 'Tablet', 'Camera', 
@@ -33,27 +34,28 @@ name_to_description = {
     'Glue Stick': 'A solid adhesive packaged in a twistable tube, used for bonding paper, cardboard, or other lightweight materials in crafts and projects.',
     'Scissors': 'A handheld tool with two sharp blades, pivoted together, used for cutting paper, fabric, or other materials with precision.',
 }
+
 name_to_category = {
-    'Laptop': 'electronic',
-    'Projector': 'electronic',
-    'Whiteboard': 'school supplies',
-    'Printer': 'utility',
-    'Scanner': 'utility',
-    'Tablet': 'electronic',
-    'Camera': 'electronic',
-    'Monitor': 'electronic',
-    'Keyboard': 'utility',
-    'Mouse': 'utility',
-    'Notebook': 'school supplies',
-    'Pen': 'school supplies',
-    'Eraser': 'school supplies',
-    'Ruler': 'school supplies',
-    'Marker': 'school supplies',
-    'Stapler': 'office supplies',
-    'Paper Clips': 'office supplies',
-    'Highlighter': 'school supplies',
-    'Glue Stick': 'school supplies',
-    'Scissors': 'utility',
+    'Laptop': EquipmentCategoryEnum.INSTRUMENT,
+    'Projector': EquipmentCategoryEnum.INSTRUMENT,
+    'Whiteboard': EquipmentCategoryEnum.TOOL,
+    'Printer': EquipmentCategoryEnum.INSTRUMENT,
+    'Scanner': EquipmentCategoryEnum.INSTRUMENT,
+    'Tablet': EquipmentCategoryEnum.INSTRUMENT,
+    'Camera': EquipmentCategoryEnum.INSTRUMENT,
+    'Monitor': EquipmentCategoryEnum.INSTRUMENT,
+    'Keyboard': EquipmentCategoryEnum.ACCESSORY,
+    'Mouse': EquipmentCategoryEnum.ACCESSORY,
+    'Notebook': EquipmentCategoryEnum.TOOL,
+    'Pen': EquipmentCategoryEnum.TOOL,
+    'Eraser': EquipmentCategoryEnum.TOOL,
+    'Ruler': EquipmentCategoryEnum.TOOL,
+    'Marker': EquipmentCategoryEnum.TOOL,
+    'Stapler': EquipmentCategoryEnum.TOOL,
+    'Paper Clips': EquipmentCategoryEnum.TOOL,
+    'Highlighter': EquipmentCategoryEnum.TOOL,
+    'Glue Stick': EquipmentCategoryEnum.TOOL,
+    'Scissors': EquipmentCategoryEnum.TOOL,
 }
 
 class EquipmentFactory(factory.alchemy.SQLAlchemyModelFactory):
@@ -74,7 +76,7 @@ class EquipmentFactory(factory.alchemy.SQLAlchemyModelFactory):
     # Foreign key and relationship
     equipment_images = factory.RelatedFactoryList(
         EquipmentImageFactory,
-        size=5,
+        size=10,
         factory_related_name='equipment'
     )
     reservation_equipments = factory.RelatedFactoryList(

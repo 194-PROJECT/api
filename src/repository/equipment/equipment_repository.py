@@ -78,19 +78,38 @@ class EquipmentRepository:
         return data['count'] if data else 0
 
     @staticmethod
-    def get_equipment_reservations(id: int) -> Optional[list[ReservationDTO]]:
+    def get_equipment_reservations(
+        id: int,
+        limit: int,
+        offset: int,
+        order_by_clause: Optional[TextClause],
+        where_clause: Optional[TextClause],
+        ) -> Optional[list[ReservationDTO]]:
         query = (
             select(Reservation)
             .join(ReservationEquipment, Reservation.id == ReservationEquipment.reservation_id)
+        )
+
+        if where_clause is not None:
+            query = query.where(where_clause)
+
+        query = (
+            query
             .where(ReservationEquipment.equipment_id == id)
+            .order_by(order_by_clause)
+            .limit(limit)
+            .offset(offset)
             .compile(
-            compile_kwargs={"literal_binds": True},
-            dialect=postgresql.dialect(),
+                compile_kwargs={"literal_binds": True},
+                dialect=postgresql.dialect(),
             )
         )
+        
+        print(f"Query: {str(query)}")
+
         data = QueryExecutor.fetch_all(str(query))
         return [ReservationDTO(**reservation) for reservation in data] if data else None
-    
+
     @staticmethod
     def update_equipment(id: int, equipment: EquipmentDTO) -> Optional[EquipmentDTO]:
         query = (

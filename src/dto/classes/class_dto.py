@@ -1,8 +1,8 @@
 from datetime import datetime
-from pydantic import BaseModel
+from core.dto_base import DTO
 from typing import Optional
 
-class ClassDTO(BaseModel):
+class ClassDTO(DTO):
     id: Optional[int] = 0
     course_id: int
     instructor_id: int

@@ -90,7 +90,7 @@ def create_course():
         data=course.model_dump()
     )
 
-@app.route('/course/<int:id>', methods=['PUT'])
+@app.route('/course/<int:id>', methods=['PATCH'])
 def update_course(id: int):
     course = CourseHandler.get_course(id)
 

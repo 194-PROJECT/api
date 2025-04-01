@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from core.dto_base import DTO
 from datetime import date, datetime
 from typing import Optional
 
-class SemesterDTO(BaseModel):
+class SemesterDTO(DTO):
     id: Optional[int] = 0
     name: str
     start_date: date

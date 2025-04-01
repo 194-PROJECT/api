@@ -1,11 +1,12 @@
 from datetime import datetime
-from pydantic import BaseModel, EmailStr
+from pydantic import EmailStr
+from core.dto_base import DTO
 from typing import Optional
 
 from src.enum.user.user_role_enum import UserRoleEnum
 from src.enum.user.user_type_enum import UserTypeEnum
 
-class UserDTO(BaseModel):
+class UserDTO(DTO):
     id: Optional[int] = 0
     email: EmailStr
     username: str

@@ -90,7 +90,7 @@ def create_class():
         data=new_class.model_dump()
     )
 
-@app.route('/class/<int:id>', methods=['PUT'])
+@app.route('/class/<int:id>', methods=['PATCH'])
 def update_class(id: int):
     class_ = ClassHandler.get_class(id)
 

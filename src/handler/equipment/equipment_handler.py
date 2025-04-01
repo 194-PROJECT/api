@@ -24,8 +24,20 @@ class EquipmentHandler:
         return EquipmentRepository.get_equipments(limit, offset, order_by_clause, where_clause)
 
     @staticmethod
-    def get_equipment_reservations(id: int) -> Optional[list[ReservationDTO]]:
-        return EquipmentRepository.get_equipment_reservations(id)
+    def get_equipment_reservations(
+        id: int,
+        limit: int,
+        offset: int,
+        order_by_clause: TextClause,
+        where_clause: Optional[TextClause]
+        ) -> Optional[list[ReservationDTO]]:
+        return EquipmentRepository.get_equipment_reservations(
+            id=id,
+            limit=limit,
+            offset=offset,
+            order_by_clause=order_by_clause,
+            where_clause=where_clause,
+        )
 
     @staticmethod
     def get_equipment_count(where_clause: Optional[str]) -> int:

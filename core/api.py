@@ -240,7 +240,7 @@ class GetModelRequest(GetRequest):
                     self.value = [f"'{value}'" for value in self.value]
                 else:
                     self.value = f"'{self.value}'"
-            if issubclass(expected_type, bool):
+            elif issubclass(expected_type, bool):
                 if isinstance(self.value, list):
                     self.value = [value == 'true' or self.value == '1' for value in self.value]
                 else:
@@ -259,8 +259,6 @@ class GetModelRequest(GetRequest):
         
         if self.operator in [SqlOperator.IN, SqlOperator.NOT_IN] and not isinstance(self.value, list):
             self.value = [self.value]
-            
-        print({model.__table__})
 
         match self.operator:
             case SqlOperator.LIKE:

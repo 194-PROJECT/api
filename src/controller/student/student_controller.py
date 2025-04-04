@@ -1,5 +1,5 @@
 from flask import request
-from core.api import Api, GetModelRequest, response
+from core.api import Api, GetModelRequest, flatten_request_args, response
 
 from database.model.student import Student, StudentKeyEnum, StudentKeyTypes
 from src.dto.student.student_dto import StudentDTO
@@ -29,7 +29,7 @@ def get_student(id: int):
 
 @app.route('/student', methods=['GET'])
 def get_students():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Student,
         'table_keys': StudentKeyEnum,
         'key_types': StudentKeyTypes,
@@ -42,7 +42,7 @@ def get_students():
         get_request.where_clause,
     )
 
-    if not students or not len(students):
+    if students is None:
         return response(
             message="No students found",
             code=404,
@@ -61,7 +61,7 @@ def get_students():
 
 @app.route('/student/count', methods=['GET'])
 def get_student_count():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Student,
         'table_keys': StudentKeyEnum,
         'key_types': StudentKeyTypes,

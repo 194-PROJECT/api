@@ -25,9 +25,9 @@ def get_reservation_equipment(equipment_id: int):
 
 @app.route('/reservation/<int:reservation_id>/equipment', methods=['GET'])
 def get_reservation_equipments(reservation_id: int):
-    equipment = ReservationEquipmentHandler.get_reservation_equipments(reservation_id)
+    reservation_equipments = ReservationEquipmentHandler.get_reservation_equipments(reservation_id)
 
-    if not equipment:
+    if reservation_equipments is None:
         return response(
             message="No equipment found for the reservation",
             code=404,
@@ -37,7 +37,10 @@ def get_reservation_equipments(reservation_id: int):
     return response(
         message="Equipment found for the reservation",
         code=200,
-        data=[item.model_dump() for item in equipment],
+        data=[
+            reservation_equipment.model_dump()
+            for reservation_equipment in reservation_equipments
+        ],
     )
 
 @app.route('/reservation/<int:reservation_id>/equipment', methods=['POST'])

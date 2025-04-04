@@ -1,5 +1,5 @@
 from flask import request
-from core.api import Api, GetModelRequest, response
+from core.api import Api, GetModelRequest, flatten_request_args, response
 
 from database.model.course import Course, CourseKeyEnum, CourseKeyTypes
 from src.dto.course.course_dto import CourseDTO
@@ -26,7 +26,7 @@ def get_course(id: int):
 
 @app.route('/course', methods=['GET'])
 def get_courses():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Course,
         'table_keys': CourseKeyEnum,
         'key_types': CourseKeyTypes,
@@ -39,7 +39,7 @@ def get_courses():
         get_request.where_clause,
     )
 
-    if not courses or not len(courses):
+    if courses is None:
         return response(
             message="No courses found",
             code=404,
@@ -58,7 +58,7 @@ def get_courses():
 
 @app.route('/course/count', methods=['GET'])
 def get_course_count():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Course,
         'table_keys': CourseKeyEnum,
         'key_types': CourseKeyTypes,

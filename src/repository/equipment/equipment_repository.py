@@ -104,8 +104,6 @@ class EquipmentRepository:
                 dialect=postgresql.dialect(),
             )
         )
-        
-        print(f"Query: {str(query)}")
 
         data = QueryExecutor.fetch_all(str(query))
         return [ReservationDTO(**reservation) for reservation in data] if data else None

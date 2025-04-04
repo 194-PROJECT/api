@@ -43,7 +43,7 @@ def get_users():
         get_request.where_clause,
     )
 
-    if not users or not len(users):
+    if users is None:
         return response(
             message="No users found",
             code=404,
@@ -62,7 +62,7 @@ def get_users():
 
 @app.route('/user/count', methods=['GET'])
 def get_user_count():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': User,
         'table_keys': UserKeyEnum,
         'key_types': UserKeyTypes,

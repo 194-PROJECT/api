@@ -1,5 +1,5 @@
 from flask import request
-from core.api import Api, GetModelRequest, response
+from core.api import Api, GetModelRequest, flatten_request_args, response
 
 from database.model.department import Department, DepartmentKeyEnum, DepartmentKeyTypes
 from src.dto.department.department_dto import DepartmentDTO
@@ -26,7 +26,7 @@ def get_department(id: int):
 
 @app.route('/department', methods=['GET'])
 def get_departments():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Department,
         'table_keys': DepartmentKeyEnum,
         'key_types': DepartmentKeyTypes,
@@ -39,7 +39,7 @@ def get_departments():
         get_request.where_clause,
     )
 
-    if not departments or not len(departments):
+    if departments is None:
         return response(
             message="No departments found",
             code=404,
@@ -58,7 +58,7 @@ def get_departments():
 
 @app.route('/department/count', methods=['GET'])
 def get_department_count():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Department,
         'table_keys': DepartmentKeyEnum,
         'key_types': DepartmentKeyTypes,

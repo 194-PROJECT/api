@@ -1,5 +1,5 @@
 from flask import request
-from core.api import Api, GetModelRequest, response
+from core.api import Api, GetModelRequest, flatten_request_args, response
 
 from database.model.reservation import Reservation, ReservationKeyEnum, ReservationKeyTypes
 from src.dto.reservation.reservation_dto import ReservationDTO
@@ -26,7 +26,7 @@ def get_reservation(id: int):
 
 @app.route('/reservation', methods=['GET'])
 def get_reservations():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Reservation,
         'table_keys': ReservationKeyEnum,
         'key_types': ReservationKeyTypes,
@@ -39,7 +39,7 @@ def get_reservations():
         get_request.where_clause,
     )
 
-    if not reservations or not len(reservations):
+    if reservations is None:
         return response(
             message="No reservations found",
             code=404,
@@ -58,7 +58,7 @@ def get_reservations():
 
 @app.route('/reservation/count', methods=['GET'])
 def get_reservation_count():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Reservation,
         'table_keys': ReservationKeyEnum,
         'key_types': ReservationKeyTypes,

@@ -1,5 +1,5 @@
 from flask import request
-from core.api import Api, GetModelRequest, response
+from core.api import Api, GetModelRequest, flatten_request_args, response
 
 from database.model.asset import Asset, AssetKeyEnum, AssetKeyTypes
 from src.dto.asset.asset_dto import AssetDTO
@@ -26,7 +26,7 @@ def get_asset(id: int):
 
 @app.route('/asset', methods=['GET'])
 def get_assets():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Asset,
         'table_keys': AssetKeyEnum,
         'key_types': AssetKeyTypes,
@@ -39,7 +39,7 @@ def get_assets():
         get_request.where_clause,
     )
 
-    if not assets or not len(assets):
+    if assets is None:
         return response(
             message="No assets found",
             code=404,
@@ -58,7 +58,7 @@ def get_assets():
 
 @app.route('/asset/count', methods=['GET'])
 def get_asset_count():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Asset,
         'table_keys': AssetKeyEnum,
         'key_types': AssetKeyTypes,

@@ -1,5 +1,5 @@
 from flask import request
-from core.api import Api, GetModelRequest, response
+from core.api import Api, GetModelRequest, flatten_request_args, response
 
 from database.model.program import Program, ProgramKeyEnum, ProgramKeyTypes
 from src.dto.program.program_dto import ProgramDTO
@@ -26,7 +26,7 @@ def get_program(id: int):
 
 @app.route('/program', methods=['GET'])
 def get_programs():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Program,
         'table_keys': ProgramKeyEnum,
         'key_types': ProgramKeyTypes,
@@ -39,7 +39,7 @@ def get_programs():
         get_request.where_clause,
     )
 
-    if not programs or not len(programs):
+    if programs is None:
         return response(
             message="No programs found",
             code=404,
@@ -58,7 +58,7 @@ def get_programs():
 
 @app.route('/program/count', methods=['GET'])
 def get_program_count():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Program,
         'table_keys': ProgramKeyEnum,
         'key_types': ProgramKeyTypes,

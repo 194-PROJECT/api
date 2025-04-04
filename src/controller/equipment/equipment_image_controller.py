@@ -27,7 +27,7 @@ def get_equipment_image(id: int):
 def get_equipment_images(equipment_id: int):
     images = EquipmentImageHandler.get_images_by_equipment_id(equipment_id)
 
-    if not images:
+    if images is None:
         return response(
             message="No images found for the specified equipment",
             code=404,

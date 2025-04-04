@@ -1,5 +1,5 @@
 from enum import Enum
-from sqlalchemy import Column, DateTime, Float, Integer, String, Text, Boolean, ForeignKey, orm, sql
+from sqlalchemy import Column, DateTime, Float, Integer, String, Text, ForeignKey, orm, sql
 from core.db_model import Base
 from database.model.department import Department
 
@@ -19,7 +19,6 @@ class Program(Base):
     description = Column(Text)
     credits_required = Column(Integer)
     program_duration = Column(Float)  # duration in years
-    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships

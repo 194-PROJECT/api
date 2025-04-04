@@ -1,5 +1,5 @@
 from flask import request
-from core.api import Api, GetModelRequest, response
+from core.api import Api, GetModelRequest, flatten_request_args, response
 
 from database.model.equipment import Equipment, EquipmentKeyEnum, EquipmentKeyTypes
 from database.model.reservation import Reservation, ReservationKeyEnum, ReservationKeyTypes
@@ -27,7 +27,7 @@ def get_equipment(id: int):
 
 @app.route('/equipment', methods=['GET'])
 def get_equipments():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Equipment,
         'table_keys': EquipmentKeyEnum,
         'key_types': EquipmentKeyTypes,
@@ -40,7 +40,7 @@ def get_equipments():
         get_request.where_clause,
     )
 
-    if not equipments or not len(equipments):
+    if equipments is None:
         return response(
             message="No equipments found",
             code=404,
@@ -59,7 +59,7 @@ def get_equipments():
 
 @app.route('/equipment/count', methods=['GET'])
 def get_equipment_count():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Equipment,
         'table_keys': EquipmentKeyEnum,
         'key_types': EquipmentKeyTypes,
@@ -75,7 +75,7 @@ def get_equipment_count():
 
 @app.route('/equipment/<int:id>/reservation', methods=['GET'])
 def get_equipment_reservations(id: int):
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Reservation,
         'table_keys': ReservationKeyEnum,
         'key_types': ReservationKeyTypes,

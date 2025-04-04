@@ -1,5 +1,5 @@
 from flask import request
-from core.api import Api, GetModelRequest, response
+from core.api import Api, GetModelRequest, flatten_request_args, response
 
 from database.model.semester import Semester, SemesterKeyEnum, SemesterKeyTypes
 from src.dto.semester.semester_dto import SemesterDTO
@@ -26,7 +26,7 @@ def get_semester(id: int):
 
 @app.route('/semester', methods=['GET'])
 def get_semesters():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Semester,
         'table_keys': SemesterKeyEnum,
         'key_types': SemesterKeyTypes,
@@ -39,7 +39,7 @@ def get_semesters():
         get_request.where_clause,
     )
 
-    if not semesters or not len(semesters):
+    if semesters is None:
         return response(
             message="No semesters found",
             code=404,
@@ -58,7 +58,7 @@ def get_semesters():
 
 @app.route('/semester/count', methods=['GET'])
 def get_semester_count():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Semester,
         'table_keys': SemesterKeyEnum,
         'key_types': SemesterKeyTypes,

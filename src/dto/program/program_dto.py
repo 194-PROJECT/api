@@ -9,6 +9,5 @@ class ProgramDTO(DTO):
     description: Optional[str]
     credits_required: Optional[int]
     program_duration: Optional[float]
-    is_active: Optional[bool]
     created_at: Optional[datetime] = datetime.now()
     updated_at: Optional[datetime] = datetime.now()

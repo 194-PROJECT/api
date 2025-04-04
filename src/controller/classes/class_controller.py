@@ -1,5 +1,5 @@
 from flask import request
-from core.api import Api, GetModelRequest, response
+from core.api import Api, GetModelRequest, flatten_request_args, response
 
 from database.model.classes import Class, ClassKeyEnum, ClassKeyTypes
 from src.dto.classes.class_dto import ClassDTO
@@ -26,7 +26,7 @@ def get_class(id: int):
 
 @app.route('/class', methods=['GET'])
 def get_classes():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Class,
         'table_keys': ClassKeyEnum,
         'key_types': ClassKeyTypes,
@@ -39,7 +39,7 @@ def get_classes():
         get_request.where_clause,
     )
 
-    if not classes or not len(classes):
+    if classes is None:
         return response(
             message="No classes found",
             code=404,
@@ -58,7 +58,7 @@ def get_classes():
 
 @app.route('/class/count', methods=['GET'])
 def get_class_count():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Class,
         'table_keys': ClassKeyEnum,
         'key_types': ClassKeyTypes,

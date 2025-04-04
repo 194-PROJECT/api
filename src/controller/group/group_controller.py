@@ -1,5 +1,5 @@
 from flask import request
-from core.api import Api, GetModelRequest, response
+from core.api import Api, GetModelRequest, flatten_request_args, response
 
 from database.model.groups import Group, GroupKeyEnum, GroupKeyTypes
 from src.dto.group.group_dto import GroupDTO
@@ -26,7 +26,7 @@ def get_group(id: int):
 
 @app.route('/group', methods=['GET'])
 def get_groups():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Group,
         'table_keys': GroupKeyEnum,
         'key_types': GroupKeyTypes,
@@ -39,7 +39,7 @@ def get_groups():
         get_request.where_clause,
     )
 
-    if not groups or not len(groups):
+    if groups is None:
         return response(
             message="No groups found",
             code=404,
@@ -58,7 +58,7 @@ def get_groups():
 
 @app.route('/group/count', methods=['GET'])
 def get_group_count():
-    get_request = GetModelRequest.model_validate(dict(request.args), context={
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
         'model': Group,
         'table_keys': GroupKeyEnum,
         'key_types': GroupKeyTypes,

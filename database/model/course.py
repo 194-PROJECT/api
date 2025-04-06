@@ -8,7 +8,7 @@ class Course(Base):
     
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     program_id = Column(Integer, ForeignKey('program.id'), nullable=False, index=True)
-    prerequisite_id = Column(Integer, ForeignKey('course.id'))
+    # prerequisite_id = Column(Integer, ForeignKey('course.id'))
     name = Column(String, nullable=False, index=True)
     description = Column(String)
     credits = Column(Integer, nullable=False)
@@ -16,7 +16,7 @@ class Course(Base):
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
     program = orm.relationship(Program, back_populates="courses", foreign_keys=[program_id])
-    prerequisite = orm.relationship("Course", remote_side=[id], backref="dependent_courses")
+    # prerequisite = orm.relationship("Course", remote_side=[id], backref="dependent_courses")
     # 'To' Relationships
     classes = orm.relationship("Class", back_populates="course")
 

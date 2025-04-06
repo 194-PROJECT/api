@@ -8,13 +8,13 @@ class GroupUser(Base):
     __tablename__ = 'group_user'
     
     id = Column(Integer, primary_key=True)
-    group_id = Column(Integer, ForeignKey('groups.id'), nullable=False, index=True)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, index=True)
+    group_id = Column(Integer, ForeignKey('groups.id', ondelete='CASCADE'), nullable=False, index=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
-    group = orm.relationship(Group, back_populates="users", foreign_keys=[group_id])
-    users = orm.relationship(User, back_populates="groups", foreign_keys=[user_id])
+    group = orm.relationship(Group, back_populates='users', foreign_keys=[group_id])
+    users = orm.relationship(User, back_populates='groups', foreign_keys=[user_id])
 
 GroupUserKeyEnum = Enum('GroupUserKeyEnum', {
     column.capitalize(): column for column in GroupUser.__table__.columns.keys()

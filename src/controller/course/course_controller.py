@@ -100,8 +100,8 @@ def update_course(id: int):
             code=404,
             errors=["Failed to retrieve the requested course for update"],
         )
-
-    course_update_request = course.model_copy(update=request.json)
+    print(request.json)
+    course_update_request = course.update(data=request.json)
     updated_course = CourseHandler.update_course(id, course_update_request)
     
     return response(

@@ -1,6 +1,5 @@
 from random import randint
 import factory
-from database.factory.program_factory import ProgramFactory
 from database.factory.users_factory import UserFactory
 from database.model.student import Student
 from database.postgres.database import PostgresDatabase
@@ -18,5 +17,5 @@ class StudentFactory(factory.alchemy.SQLAlchemyModelFactory):
     created_at = factory.Faker('date_time_this_year')
     updated_at = factory.Faker('date_time_this_year')
     # Foreign key and relationship
+    program = factory.SubFactory('database.factory.program_factory.ProgramFactory')
     user = factory.SubFactory(UserFactory)
-    program = factory.SubFactory(ProgramFactory)

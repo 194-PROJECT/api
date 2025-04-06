@@ -13,7 +13,6 @@ class CourseRepository:
             insert(Course)
             .values(
                 program_id=course.program_id,
-                prerequisite_id=course.prerequisite_id,
                 name=course.name,
                 description=course.description,
                 credits=course.credits,
@@ -80,7 +79,6 @@ class CourseRepository:
             .where(Course.id == id)
             .values(
                 program_id=course.program_id,
-                prerequisite_id=course.prerequisite_id,
                 name=course.name,
                 description=course.description,
                 credits=course.credits,

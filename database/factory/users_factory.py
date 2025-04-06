@@ -3,6 +3,7 @@ import factory
 from core import auth_helper
 from database.postgres.database import PostgresDatabase
 from database.model.users import User
+from src.enum.user.user_role_enum import UserRoleEnum
 from src.enum.user.user_type_enum import UserTypeEnum
 from src.handler.user.user_handler import UserHandler
 
@@ -11,6 +12,12 @@ class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
         model = User
         sqlalchemy_session_factory = PostgresDatabase.get_session
         sqlalchemy_session_persistence = 'commit'
+    
+    class Params:
+        is_faculty = factory.Trait(
+            type=UserTypeEnum.FACULTY,
+            role=UserRoleEnum.ADMIN,
+        )
 
     email = factory.Faker('email')
     username = factory.Faker('user_name')

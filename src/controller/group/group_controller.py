@@ -100,8 +100,8 @@ def update_group(id: int):
             code=404,
             errors=["Failed to retrieve the requested group for update"],
         )
-
-    group_update_request = group.model_copy(update=request.json)
+    
+    group_update_request = group.update(data=request.json)
     updated_group = GroupHandler.update_group(id, group_update_request)
     
     return response(

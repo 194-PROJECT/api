@@ -5,6 +5,8 @@ import os
 import importlib
 import pkgutil
 
+WEBAPP_URL = os.getenv("WEBAPP_URL", "http://localhost:5173")
+
 ignore_folders = ["__pycache__", "_types"]
 
 def get_controller_paths(base_path: str, ignore_folders: str) -> List[str]:
@@ -48,4 +50,14 @@ initialize_controllers()
 
 api_controller = Api()
 app = Api.application
+
+@app.after_request
+def handle_options(response):
+    response.headers["Access-Control-Allow-Origin"] = WEBAPP_URL
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, X-Requested-With, Authorization"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+
+    return response
+
 app.run(debug=True)

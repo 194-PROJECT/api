@@ -6,8 +6,7 @@ from src.repository.program.program_repository import ProgramRepository
 
 class ProgramHandler:
     @staticmethod
-    def create_program(program_data: dict) -> Optional[ProgramDTO]:
-        program = ProgramDTO(**program_data)
+    def create_program(program: ProgramDTO) -> Optional[ProgramDTO]:
         return ProgramRepository.create_program(program)
     
     @staticmethod

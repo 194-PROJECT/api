@@ -8,6 +8,6 @@ class ProgramDTO(DTO):
     title: str
     description: Optional[str]
     credits_required: Optional[int]
-    program_duration: Optional[float]
+    duration: Optional[float]
     created_at: Optional[datetime] = datetime.now()
     updated_at: Optional[datetime] = datetime.now()

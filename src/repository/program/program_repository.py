@@ -16,8 +16,7 @@ class ProgramRepository:
                 title=program.title,
                 description=program.description,
                 credits_required=program.credits_required,
-                program_duration=program.program_duration,
-                is_active=program.is_active,
+                duration=program.duration,
             )
             .returning("*")
             .compile(
@@ -84,8 +83,7 @@ class ProgramRepository:
                 title=program.title,
                 description=program.description,
                 credits_required=program.credits_required,
-                program_duration=program.program_duration,
-                is_active=program.is_active,
+                duration=program.duration,
             )
             .returning("*")
             .compile(

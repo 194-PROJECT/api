@@ -16,7 +16,7 @@ class SemesterFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = 'commit'
 
     name = factory.LazyFunction(random_semester_name)
-    start_date = factory.Faker('date_this_year')
-    end_date = factory.Faker('date_this_year')
+    start_date = factory.Faker('date_time_this_year')
+    end_date = factory.Faker('date_time_this_year')
     created_at = factory.Faker('date_time_this_year')
     updated_at = factory.Faker('date_time_this_year')

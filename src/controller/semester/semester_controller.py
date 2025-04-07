@@ -74,10 +74,19 @@ def get_semester_count():
 
 @app.route('/semester', methods=['POST'])
 def create_semester():
-    semester_data = SemesterDTO(**request.json)
-    semester = SemesterHandler.create_semester(SemesterDTO(**semester_data))
+    semester_data = request.json
+    semester = SemesterDTO(**semester_data)
+    
+    if semester.start_date > semester.end_date:
+        return response(
+            message="Invalid semester dates",
+            code=400,
+            errors=["Start date must be before end date"],
+        )
+    
+    created_semester = SemesterHandler.create_semester(SemesterDTO(**semester_data))
 
-    if not semester:
+    if not created_semester:
         return response(
             message="Failed to create semester",
             code=400,
@@ -85,9 +94,9 @@ def create_semester():
         )
 
     return response(
-        message=f"Semester {semester.id} created",
+        message=f"Semester {created_semester.id} created",
         code=201,
-        data=semester.model_dump()
+        data=created_semester.model_dump()
     )
 
 @app.route('/semester/<int:id>', methods=['PATCH'])
@@ -101,7 +110,15 @@ def update_semester(id: int):
             errors=["Cannot update semester that does not exist"],
         )
 
-    semester_update_request = semester.model_copy(update=request.json)
+    semester_update_request = semester.update(data=request.json)
+
+    if semester.start_date > semester.end_date:
+        return response(
+            message="Invalid semester dates",
+            code=400,
+            errors=["Start date must be before end date"],
+        )
+
     updated_semester = SemesterHandler.update_semester(id, semester_update_request)
     
     return response(

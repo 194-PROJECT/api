@@ -77,7 +77,7 @@ def create_reservation():
     reservation_data = request.json
     reservation = ReservationDTO(**reservation_data)
     
-    if reservation.start_date < reservation.end_date:
+    if reservation.start_date > reservation.end_date:
         return response(
             message="Invalid reservation dates",
             code=400,
@@ -111,6 +111,14 @@ def update_reservation(id: int):
         )
 
     reservation_update_request = reservation.update(request.json)
+
+    if reservation.start_date > reservation.end_date:
+        return response(
+            message="Invalid reservation dates",
+            code=400,
+            errors=["Start date must be before end date"],
+        )
+
     updated_reservation = ReservationHandler.update_reservation(id, reservation_update_request)
     
     return response(

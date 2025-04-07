@@ -53,7 +53,7 @@ class ProgramFactory(factory.alchemy.SQLAlchemyModelFactory):
     title = factory.Faker('random_element', elements=program_names)
     description = factory.Faker('text')
     credits_required = factory.Faker('random_int', min=120, max=180)
-    program_duration = factory.Faker('pyfloat', min_value=2, max_value=4)
+    duration = factory.Faker('pyfloat', min_value=2, max_value=4, right_digits=2, positive=True)
     created_at = factory.Faker('date_time_this_year')
     updated_at = factory.Faker('date_time_this_year')
     # Foreign key and relationship

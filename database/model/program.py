@@ -18,7 +18,7 @@ class Program(Base):
     title = Column(String(255), nullable=False, index=True)
     description = Column(Text)
     credits_required = Column(Integer)
-    program_duration = Column(Float)  # duration in years
+    duration = Column(Float)  # duration in years
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships

@@ -1,5 +1,5 @@
 from enum import Enum
-from sqlalchemy import Column, DateTime, Integer, String, Date, sql, orm
+from sqlalchemy import Column, DateTime, Integer, String, sql, orm
 from core.db_model import Base
 
 class Semester(Base):
@@ -7,8 +7,8 @@ class Semester(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False, index=True)
-    start_date = Column(Date, nullable=False, index=True)
-    end_date = Column(Date, nullable=False, index=True)
+    start_date = Column(DateTime(timezone=True), nullable=False, index=True)
+    end_date = Column(DateTime(timezone=True), nullable=False, index=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'To' Relationships

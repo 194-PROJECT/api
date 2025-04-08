@@ -7,7 +7,6 @@ class EquipmentDTO(DTO):
     name: str
     description: str
     category: str
-    quantity: int
     purchase_date: date
     purchased_by: Optional[str] = None
     price: float

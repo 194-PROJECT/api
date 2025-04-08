@@ -67,7 +67,6 @@ class EquipmentFactory(factory.alchemy.SQLAlchemyModelFactory):
     name = factory.Faker('random_element', elements=('Laptop', 'Projector', 'Whiteboard', 'Printer', 'Scanner'))
     description = factory.LazyAttribute(lambda obj: name_to_description[obj.name])
     category = factory.LazyAttribute(lambda obj: name_to_category[obj.name])
-    quantity = factory.Faker('random_int', min=1, max=10)
     purchase_date = factory.Faker('date_time_this_year')
     price = factory.Faker('pyfloat', positive=True, right_digits=2, min_value=100, max_value=1000)
     purchased_by = factory.Faker('name')

@@ -1,3 +1,4 @@
+from datetime import timedelta
 import factory
 from database.factory.users_factory import UserFactory
 from database.factory.groups_factory import GroupFactory
@@ -11,7 +12,7 @@ class ReservationFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = 'commit'
 
     start_date = factory.Faker('date_time_this_year')
-    end_date = factory.Faker('date_time_this_year')
+    end_date = factory.LazyAttribute(lambda obj: obj.start_date + timedelta(days=1))
     accepted = factory.Faker('boolean')
     returned = factory.Faker('boolean')
     reason = factory.Faker('sentence', nb_words=12, variable_nb_words=True)

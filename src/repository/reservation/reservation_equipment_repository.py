@@ -32,10 +32,12 @@ class ReservationEquipmentRepository:
             .values(
                 reservation_id=reservation_equipment.reservation_id,
                 equipment_id=reservation_equipment.equipment_id,
-                quantity=reservation_equipment.quantity,
+                equipment_item_id=reservation_equipment.equipment_item_id,
                 returned=reservation_equipment.returned,
-                returned_quantity=reservation_equipment.returned_quantity,
                 mishandled=reservation_equipment.mishandled,
+                rating=reservation_equipment.rating,
+                comment=reservation_equipment.comment,
+                admin_note=reservation_equipment.admin_note,
             )
             .returning("*")
             .compile(
@@ -54,10 +56,12 @@ class ReservationEquipmentRepository:
             .values(
                 reservation_id=reservation_equipment.reservation_id,
                 equipment_id=reservation_equipment.equipment_id,
-                quantity=reservation_equipment.quantity,
+                equipment_item_id=reservation_equipment.equipment_item_id,
                 returned=reservation_equipment.returned,
-                returned_quantity=reservation_equipment.returned_quantity,
                 mishandled=reservation_equipment.mishandled,
+                rating=reservation_equipment.rating,
+                comment=reservation_equipment.comment,
+                admin_note=reservation_equipment.admin_note,
             )
             .returning("*")
             .compile(

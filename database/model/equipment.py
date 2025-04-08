@@ -9,7 +9,6 @@ class Equipment(Base):
     name = Column(String(255), nullable=False, index=True)
     description = Column(String(255), nullable=False)
     category = Column(String(255), nullable=False, index=True)
-    quantity = Column(Integer, nullable=False, index=True)
     purchase_date = Column(Date, nullable=False, index=True)
     purchased_by = Column(String(255), index=True)
     price = Column(Float, nullable=False, index=True)
@@ -19,6 +18,7 @@ class Equipment(Base):
     reservation_equipments = orm.relationship("ReservationEquipment", back_populates="equipment")
     equipment_images = orm.relationship("EquipmentImage", back_populates="equipment")
     equipment_availabilities = orm.relationship("EquipmentAvailability", back_populates="equipment")
+    equipment_items = orm.relationship("EquipmentItem", back_populates="equipment")
 
 EquipmentKeyEnum = Enum('EquipmentKeyEnum', {
     column.capitalize(): column for column in Equipment.__table__.columns.keys()

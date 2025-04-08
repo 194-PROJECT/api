@@ -8,6 +8,7 @@ from .course import Course # noqa: F401
 from .department import Department # noqa: F401
 from .equipment_availability import EquipmentAvailability # noqa: F401
 from .equipment_image import EquipmentImage # noqa: F401
+from .equipment_item import EquipmentItem # noqa: F401
 from .equipment import Equipment # noqa: F401
 from .group_user import GroupUser # noqa: F401
 from .groups import Group # noqa: F401

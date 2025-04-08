@@ -7,6 +7,7 @@ from .department_factory import DepartmentFactory # noqa
 from .equipment_availability_factory import EquipmentAvailabilityFactory # noqa
 from .equipment_factory import EquipmentFactory # noqa
 from .equipment_image_factory import EquipmentImageFactory # noqa
+
 from .group_user_factory import GroupUserFactory # noqa
 from .users_factory import UserFactory # noqa
 from .student_factory import StudentFactory # noqa

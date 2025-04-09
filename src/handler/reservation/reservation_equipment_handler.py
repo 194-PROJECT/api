@@ -20,5 +20,5 @@ class ReservationEquipmentHandler:
         return ReservationEquipmentRepository.update_reservation_equipment(id, reservation_equipment)
 
     @staticmethod
-    def delete_reservation_equipment(id: int) -> bool:
+    def delete_reservation_equipment(id: int) -> None:
         return ReservationEquipmentRepository.delete_reservation_equipment(id)

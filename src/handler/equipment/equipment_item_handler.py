@@ -12,21 +12,21 @@ class EquipmentItemHandler:
     @staticmethod
     def get_equipment_item(id: int) -> Optional[EquipmentItemDTO]:
         return EquipmentItemRepository.get_equipment_item(id)
-
+    
     @staticmethod
-    def get_items_by_equipment(
-        equipment_id: int,
+    def get_equipment_items(
         limit: int,
         offset: int,
         order_by_clause: TextClause,
-        where_clause: Optional[TextClause]
+        where_clause: TextClause,
+        equipment_id: int = None,
     ) -> list[EquipmentItemDTO]:
-        return EquipmentItemRepository.get_items_by_equipment(
-            equipment_id=equipment_id,
+        return EquipmentItemRepository.get_equipment_items(
             limit=limit,
             offset=offset,
             order_by_clause=order_by_clause,
             where_clause=where_clause,
+            equipment_id=equipment_id,
         )
 
     @staticmethod

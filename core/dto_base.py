@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class DTO(BaseModel):
-    def update(self, data: dict, debug: bool = False) -> "DTO":
+    def update(self, data: dict, debug: bool = False):
         update = self.model_dump()
         update.update(data)
         for k, v in self.model_validate(update).model_dump(exclude_defaults=True).items():

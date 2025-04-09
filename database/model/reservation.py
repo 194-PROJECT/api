@@ -14,6 +14,7 @@ class Reservation(Base):
     start_date = Column(DateTime(timezone=True), nullable=False, index=True)
     end_date = Column(DateTime(timezone=True), nullable=False, index=True)
     accepted = Column(Boolean, index=True)
+    claimed = Column(Boolean, index=True)
     returned = Column(Boolean, index=True)
     reason = Column(String(255), nullable=False)
     admin_note = Column(String(255))

@@ -10,6 +10,7 @@ class ReservationDTO(DTO):
     start_date: datetime
     end_date: datetime
     accepted: Optional[bool] = None
+    claimed: Optional[bool] = None
     returned: Optional[bool] = None
     reason: str
     admin_note: Optional[str] = None

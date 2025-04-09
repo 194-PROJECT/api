@@ -1,7 +1,6 @@
 from flask import request
 from core.api import Api, response
 from src.dto.reservation.reservation_equipment_dto import ReservationEquipmentDTO
-from src.handler.equipment.equipment_handler import EquipmentHandler
 from src.handler.reservation.reservation_equipment_handler import ReservationEquipmentHandler
 
 app = Api.application
@@ -46,7 +45,7 @@ def get_reservation_equipments(reservation_id: int):
 @app.route('/reservation/<int:reservation_id>/equipment', methods=['POST'])
 def add_reservation_equipment(reservation_id: int):
     equipment_data = request.json
-    equipment = ReservationEquipmentDTO(**equipment_data, reservation_id=reservation_id)
+    equipment = ReservationEquipmentDTO(**equipment_data)
 
     created_equipment = ReservationEquipmentHandler.add_reservation_equipment(equipment)
 
@@ -65,7 +64,7 @@ def add_reservation_equipment(reservation_id: int):
 
 @app.route('/reservation/equipment/<int:id>', methods=['PATCH'])
 def update_reservation_equipment(id: int):
-    reservation_equipment = EquipmentHandler.get_equipment(id)
+    reservation_equipment = ReservationEquipmentHandler.get_reservation_equipment(id)
     
     if not reservation_equipment:
         return response(
@@ -75,6 +74,7 @@ def update_reservation_equipment(id: int):
         )
 
     reservation_equipment_update_request = reservation_equipment.update(request.json)
+    print(reservation_equipment_update_request)
     reservation_equipment = ReservationEquipmentHandler.update_reservation_equipment(id, reservation_equipment_update_request)
     
     return response(
@@ -83,16 +83,9 @@ def update_reservation_equipment(id: int):
         data=reservation_equipment.model_dump()
     )
 
-@app.route('/reservation/equipment/<int:equipment_id>', methods=['DELETE'])
-def delete_reservation_equipment(reservation_id: int, equipment_id: int):
-    success = ReservationEquipmentHandler.delete_reservation_equipment(reservation_id, equipment_id)
-
-    if not success:
-        return response(
-            message="Failed to delete equipment from the reservation",
-            code=400,
-            errors=["Failed to delete the specified equipment"],
-        )
+@app.route('/reservation/equipment/<int:id>', methods=['DELETE'])
+def delete_reservation_equipment(id: int):
+    ReservationEquipmentHandler.delete_reservation_equipment(id)
 
     return response(
         message="Equipment deleted from the reservation",

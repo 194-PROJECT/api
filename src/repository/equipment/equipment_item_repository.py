@@ -32,24 +32,25 @@ class EquipmentItemRepository:
         )
         data = QueryExecutor.fetch_one(str(query))
         return EquipmentItemDTO(**data) if data else None
-
+    
     @staticmethod
-    def get_items_by_equipment(
-        equipment_id: int,
+    def get_equipment_items(
         limit: int,
         offset: int,
         order_by_clause: str,
         where_clause: Optional[str] = None,
+        equipment_id: Optional[int] = None,
     ) -> list[EquipmentItemDTO]:
         query = select(EquipmentItem).order_by(order_by_clause)
         
         if where_clause is not None:
             query = query.where(where_clause)
         
+        if equipment_id is not None:
+            query = query.where(EquipmentItem.equipment_id == equipment_id)
+        
         query = (
             query
-            .where(EquipmentItem.equipment_id == equipment_id)
-            .order_by(order_by_clause)
             .limit(limit)
             .offset(offset)
             .compile(
@@ -57,7 +58,8 @@ class EquipmentItemRepository:
                 dialect=postgresql.dialect(),
             )
         )
-        data = QueryExecutor.fetch_many(str(query), size=limit)
+
+        data = QueryExecutor.fetch_all(str(query))
         return [EquipmentItemDTO(**item) for item in data] if data else []
 
     @staticmethod

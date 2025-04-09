@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import request
 from core.api import Api, GetModelRequest, flatten_request_args, response
 
@@ -110,7 +111,11 @@ def update_reservation(id: int):
             errors=["Cannot update reservation that does not exist"],
         )
 
-    reservation_update_request = reservation.update(request.json)
+    previous_return_status = reservation.returned
+    reservation_update_request = reservation.update(request.json, debug=True)
+
+    if previous_return_status != reservation_update_request.returned:
+        reservation_update_request.return_date = datetime.now()
 
     if reservation.start_date > reservation.end_date:
         return response(

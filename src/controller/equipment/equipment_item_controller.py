@@ -24,7 +24,36 @@ def get_equipment_item(id: int):
         data=equipment_item.model_dump()
     )
 
+@app.route('/equipment/item', methods=['GET'])
+def get_equipment_items():
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
+        'model': EquipmentItem,
+        'table_keys': EquipmentItemKeyEnum,
+        'key_types': EquipmentItemKeyTypes,
+    })
 
+    equipment_items = EquipmentItemHandler.get_equipment_items(
+        get_request.limit,
+        get_request.offset,
+        get_request.order_by_clause,
+        get_request.where_clause,
+    )
+
+    if not equipment_items:
+        return response(
+            message="No equipment items found",
+            code=404,
+            errors=["Failed to retrieve equipment items"],
+        )
+    
+    equipment_item_count = EquipmentItemHandler.get_equipment_item_count(get_request.where_clause)
+
+    return response(
+        message="Equipment items retrieved",
+        code=200,
+        data=[item.model_dump() for item in equipment_items],
+        total_rows=equipment_item_count,
+    )
 
 @app.route('/equipment/<int:equipment_id>/item', methods=['GET'])
 def get_items_by_equipment(equipment_id: int):
@@ -34,12 +63,12 @@ def get_items_by_equipment(equipment_id: int):
         'key_types': EquipmentItemKeyTypes,
     })
 
-    equipment_items = EquipmentItemHandler.get_items_by_equipment(
-        equipment_id,
+    equipment_items = EquipmentItemHandler.get_equipment_items(
         get_request.limit,
         get_request.offset,
         get_request.order_by_clause,
         get_request.where_clause,
+        equipment_id,
     )
 
     if not equipment_items:

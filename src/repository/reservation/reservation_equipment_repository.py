@@ -73,7 +73,7 @@ class ReservationEquipmentRepository:
         return ReservationEquipmentDTO(**data) if data else None
 
     @staticmethod
-    def delete_reservation_equipment(id: int) -> bool:
+    def delete_reservation_equipment(id: int) -> None:
         query = (
             delete(ReservationEquipment)
             .where(ReservationEquipment.id == id)
@@ -82,4 +82,5 @@ class ReservationEquipmentRepository:
                 dialect=postgresql.dialect(),
             )
         )
+        print(str(query))
         QueryExecutor.delete_one(str(query))

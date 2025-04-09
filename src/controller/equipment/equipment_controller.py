@@ -140,8 +140,8 @@ def update_equipment(id: int):
             code=404,
             errors=["Failed to retrieve the requested equipment for update"],
         )
-
-    equipment_update_request = equipment.model_validate(obj=request.json)
+    
+    equipment_update_request = equipment.update(data=request.json)
     updated_equipment = EquipmentHandler.update_equipment(id, equipment_update_request)
     
     return response(

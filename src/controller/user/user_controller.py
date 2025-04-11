@@ -146,7 +146,7 @@ async def update_user(id: int):
             errors=["Cannot update user that does not exist"],
         )
 
-    user_update_request = user.model_copy(update=request.json)
+    user_update_request = user.update(data=request.json, debug=True)
     user_update_request.role = UserHandler.user_type_to_role_map[user_update_request.type]
 
     if user_update_request.type == UserTypeEnum.STUDENT and user.type != UserTypeEnum.STUDENT:

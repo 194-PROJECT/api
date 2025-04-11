@@ -74,7 +74,6 @@ def update_reservation_equipment(id: int):
         )
 
     reservation_equipment_update_request = reservation_equipment.update(request.json)
-    print(reservation_equipment_update_request)
     reservation_equipment = ReservationEquipmentHandler.update_reservation_equipment(id, reservation_equipment_update_request)
     
     return response(

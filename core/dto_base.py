@@ -1,6 +1,10 @@
 from pydantic import BaseModel
 
 class DTO(BaseModel):
+    model_config = {
+        "from_attributes": True
+    }
+    
     def update(self, data: dict, debug: bool = False):
         update = self.model_dump()
         update.update(data)

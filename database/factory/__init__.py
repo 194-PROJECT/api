@@ -4,7 +4,6 @@ from .class_schedule_factory import ClassScheduleFactory # noqa
 from .classes_factory import ClassFactory # noqa
 from .course_factory import CourseFactory # noqa
 from .department_factory import DepartmentFactory # noqa
-from .equipment_availability_factory import EquipmentAvailabilityFactory # noqa
 from .equipment_factory import EquipmentFactory # noqa
 from .equipment_image_factory import EquipmentImageFactory # noqa
 

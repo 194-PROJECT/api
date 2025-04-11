@@ -82,5 +82,4 @@ class ReservationEquipmentRepository:
                 dialect=postgresql.dialect(),
             )
         )
-        print(str(query))
         QueryExecutor.delete_one(str(query))

@@ -20,6 +20,7 @@ class UserRepository:
                 password=hash_password(user.password),
                 type=user.type,
                 role=user.role,
+                profile_picture_url=user.profile_picture_url,
             )
             .returning("*")
             .compile(
@@ -108,9 +109,10 @@ class UserRepository:
                 username=user.username,
                 first_name=user.first_name,
                 last_name=user.last_name,
+                password=user.password,
                 type=user.type,
                 role=user.role,
-                password=user.password,
+                profile_picture_url=user.profile_picture_url,
             )
             .returning("*")
             .compile(

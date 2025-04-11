@@ -6,7 +6,6 @@ from .class_schedule import ClassSchedule # noqa: F401
 from .classes import Class # noqa: F401
 from .course import Course # noqa: F401
 from .department import Department # noqa: F401
-from .equipment_availability import EquipmentAvailability # noqa: F401
 from .equipment_image import EquipmentImage # noqa: F401
 from .equipment_item import EquipmentItem # noqa: F401
 from .equipment import Equipment # noqa: F401

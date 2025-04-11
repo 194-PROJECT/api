@@ -1,8 +1,11 @@
+from datetime import datetime
+from database.model.equipment_item import EquipmentItem
 from database.model.reservation import Reservation
 from database.model.reservation_equipment import ReservationEquipment
+from database.postgres.database import PostgresDatabase
 from database.postgres.query import QueryExecutor
 from database.model.equipment import Equipment
-from sqlalchemy import TextClause, delete, insert, select, update
+from sqlalchemy import TextClause, delete, insert, or_, select, update, orm
 from sqlalchemy.dialects import postgresql
 from typing import Optional
 
@@ -64,6 +67,46 @@ class EquipmentRepository:
 
         data = QueryExecutor.fetch_all(str(query))
         return [EquipmentDTO(**equipment) for equipment in data] if data else None
+
+    @staticmethod
+    def get_available_equipments(
+        limit: int,
+        offset: int,
+        order_by_clause: Optional[TextClause],
+        where_clause: Optional[TextClause],
+        start_date: datetime,
+        end_date: datetime,
+    ) -> Optional[list[EquipmentDTO]]:
+        query = (
+            select(Equipment)
+            .options(
+                orm.selectinload(Equipment.equipment_items),
+                orm.selectinload(Equipment.equipment_images),
+            )
+            .join(EquipmentItem, Equipment.id == EquipmentItem.equipment_id)
+            .outerjoin(ReservationEquipment, ReservationEquipment.equipment_item_id == EquipmentItem.id)
+            .outerjoin(Reservation, Reservation.id == ReservationEquipment.reservation_id)
+            .where(
+                or_(
+                    Reservation.id is None,
+                    Reservation.start_date >= end_date,
+                    Reservation.end_date <= start_date,
+                )
+            )
+            .order_by(order_by_clause)
+        )
+
+        if where_clause is not None:
+            query = query.where(where_clause)
+
+        query = (
+            query
+            .limit(limit)
+            .offset(offset)
+        )
+
+        data = PostgresDatabase.get_session().execute(query).scalars().unique().all()
+        return [EquipmentDTO.model_validate(equipment) for equipment in data] if data else None
 
     @staticmethod
     def get_equipment_count(where_clause: Optional[TextClause]) -> int:

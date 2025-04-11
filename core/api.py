@@ -2,7 +2,7 @@ from datetime import datetime, time
 from enum import Enum
 from typing import Any, ClassVar, List, Optional, Self, Type, TypedDict, Union
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator, model_validator
-from flask import Flask, Request
+from flask import Flask, Request, json
 from sqlalchemy import TextClause
 from sqlalchemy.orm import DeclarativeBase
 
@@ -181,6 +181,19 @@ class GetModelRequest(GetRequest):
     operator: Optional[SqlOperator] = None
     value: Optional[Union[str, list[str]]] = None
     where_clause: Optional[TextClause] = None
+
+    extra: Optional[str] = None
+    
+    @model_validator(mode="after")
+    def parse_json_extra(self, info: ValidationInfo) -> Self:
+        if self.extra:
+            try:
+                self.extra = json.loads(self.extra)
+            except json.JSONDecodeError as e:
+                print(e)
+                self.extra = None
+
+        return self
 
     @model_validator(mode="after")
     def build_order_clause(self, info: ValidationInfo) -> Self:

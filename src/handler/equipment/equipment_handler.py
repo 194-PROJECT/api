@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 
 from sqlalchemy import TextClause
@@ -22,6 +23,24 @@ class EquipmentHandler:
         where_clause: Optional[TextClause]
     ) -> Optional[list[EquipmentDTO]]:
         return EquipmentRepository.get_equipments(limit, offset, order_by_clause, where_clause)
+
+    @staticmethod
+    def get_available_equipments(
+        limit: int,
+        offset: int,
+        order_by_clause: TextClause,
+        where_clause: Optional[TextClause],
+        start_date: datetime,
+        end_date: datetime
+    ) -> Optional[list[EquipmentDTO]]:
+        return EquipmentRepository.get_available_equipments(
+            limit,
+            offset,
+            order_by_clause,
+            where_clause,
+            start_date,
+            end_date
+        )
 
     @staticmethod
     def get_equipment_reservations(

@@ -17,7 +17,6 @@ class Equipment(Base):
     # 'To' Relationships
     reservation_equipments = orm.relationship("ReservationEquipment", back_populates="equipment")
     equipment_images = orm.relationship("EquipmentImage", back_populates="equipment")
-    equipment_availabilities = orm.relationship("EquipmentAvailability", back_populates="equipment")
     equipment_items = orm.relationship("EquipmentItem", back_populates="equipment")
 
 EquipmentKeyEnum = Enum('EquipmentKeyEnum', {

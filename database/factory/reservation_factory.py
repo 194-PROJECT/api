@@ -13,7 +13,7 @@ class ReservationFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = 'commit'
 
     start_date = factory.Faker('date_time_this_year', after_now=True, before_now=False)
-    end_date = factory.LazyAttribute(lambda obj: obj.start_date + timedelta(hour=randint(1, 24), minute=randint(0, 59)))
+    end_date = factory.LazyAttribute(lambda obj: obj.start_date + timedelta(hours=randint(1, 24), minutes=randint(0, 59)))
     accepted = True
     claimed = False
     returned = False

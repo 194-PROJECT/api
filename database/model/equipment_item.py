@@ -9,7 +9,7 @@ class EquipmentItem(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     item_code = Column(String, nullable=False, unique=True)
-    equipment_id = Column(Integer, ForeignKey('equipment.id'), nullable=False)
+    equipment_id = Column(Integer, ForeignKey('equipment.id', ondelete='CASCADE'), nullable=False)
     available = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime(timezone=True), server_default=sql.func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())

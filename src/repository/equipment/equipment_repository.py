@@ -5,7 +5,7 @@ from database.model.reservation_equipment import ReservationEquipment
 from database.postgres.database import PostgresDatabase
 from database.postgres.query import QueryExecutor
 from database.model.equipment import Equipment
-from sqlalchemy import TextClause, delete, insert, or_, select, update, orm
+from sqlalchemy import TextClause, and_, delete, insert, or_, select, update, orm
 from sqlalchemy.dialects import postgresql
 from typing import Optional
 
@@ -77,21 +77,33 @@ class EquipmentRepository:
         start_date: datetime,
         end_date: datetime,
     ) -> Optional[list[EquipmentDTO]]:
+        reserved_subq = (
+            select(ReservationEquipment.equipment_item_id)
+            .join(Reservation)
+            .where(
+                and_(
+                    Reservation.start_date <= end_date,
+                    Reservation.end_date >= start_date,
+                    or_(
+                        Reservation.accepted.is_(True), # Reserved
+                        Reservation.accepted.is_(None), # Pending
+                    ),
+                )
+            )
+        )
+
         query = (
             select(Equipment)
             .options(
-                orm.selectinload(Equipment.equipment_items),
+                orm.contains_eager(Equipment.equipment_items),
                 orm.selectinload(Equipment.equipment_images),
             )
             .join(EquipmentItem, Equipment.id == EquipmentItem.equipment_id)
             .outerjoin(ReservationEquipment, ReservationEquipment.equipment_item_id == EquipmentItem.id)
             .outerjoin(Reservation, Reservation.id == ReservationEquipment.reservation_id)
             .where(
-                or_(
-                    Reservation.id is None,
-                    Reservation.start_date >= end_date,
-                    Reservation.end_date <= start_date,
-                )
+                EquipmentItem.available.is_(True),
+                EquipmentItem.id.not_in(reserved_subq)
             )
             .order_by(order_by_clause)
         )
@@ -106,6 +118,7 @@ class EquipmentRepository:
         )
 
         data = PostgresDatabase.get_session().execute(query).scalars().unique().all()
+        
         return [EquipmentDTO.model_validate(equipment) for equipment in data] if data else None
 
     @staticmethod

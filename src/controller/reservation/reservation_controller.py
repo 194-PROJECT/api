@@ -4,6 +4,7 @@ from core.api import Api, GetModelRequest, flatten_request_args, response
 
 from database.model.reservation import Reservation, ReservationKeyEnum, ReservationKeyTypes
 from src.dto.reservation.reservation_dto import ReservationDTO
+from src.dto.reservation.reservation_equipment_dto import ReservationRequestEquipmentItemDTO
 from src.handler.reservation.reservation_handler import ReservationHandler
 
 app = Api.application
@@ -77,7 +78,25 @@ def get_reservation_count():
 def create_reservation():
     reservation_data = request.json
     reservation = ReservationDTO(**reservation_data)
-    
+
+    equipments = reservation_data['equipments'] if 'equipments' in reservation_data else None
+
+    if not equipments:
+        return response(
+            message="No equipments provided",
+            code=400,
+            errors=["Please provide a list of equipments for the reservation"],
+        )
+
+    if not isinstance(equipments, list):
+        return response(
+            message="Invalid equipments provided",
+            code=400,
+            errors=["Equipments must be a list"],
+        )
+
+    equipments = [ReservationRequestEquipmentItemDTO(**equipment) for equipment in equipments]
+
     if reservation.start_date > reservation.end_date:
         return response(
             message="Invalid reservation dates",
@@ -85,7 +104,7 @@ def create_reservation():
             errors=["Start date must be before end date"],
         )
 
-    created_reservation = ReservationHandler.create_reservation(reservation)
+    created_reservation = ReservationHandler.create_reservation(reservation, equipments)
     
     if not created_reservation:
         return response(

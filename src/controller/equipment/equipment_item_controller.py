@@ -87,6 +87,22 @@ def get_items_by_equipment(equipment_id: int):
         total_rows=equipment_item_count,
     )
 
+@app.route('/equipment/item/count', methods=['GET'])
+def get_equipment_item_count():
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
+        'model': EquipmentItem,
+        'table_keys': EquipmentItemKeyEnum,
+        'key_types': EquipmentItemKeyTypes,
+    })
+
+    equipment_item_count = EquipmentItemHandler.get_equipment_item_count(get_request.where_clause)
+
+    return response(
+        message="Equipment item count retrieved",
+        code=200,
+        data=equipment_item_count
+    )
+
 @app.route('/equipment/item', methods=['POST'])
 def create_equipment_item():
     equipment_item_data = EquipmentItemDTO(**request.json)

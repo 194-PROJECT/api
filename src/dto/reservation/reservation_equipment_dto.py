@@ -14,3 +14,7 @@ class ReservationEquipmentDTO(DTO):
     admin_note: Optional[str] = None
     created_at: Optional[datetime] = datetime.now()
     updated_at: Optional[datetime] = datetime.now()
+
+class ReservationRequestEquipmentItemDTO(DTO):
+    id: int
+    items: list[int]

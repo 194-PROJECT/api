@@ -1,11 +1,26 @@
 from typing import Optional
 from src.dto.reservation.reservation_dto import ReservationDTO
+from src.dto.reservation.reservation_equipment_dto import ReservationEquipmentDTO, ReservationRequestEquipmentItemDTO
+from src.repository.reservation.reservation_equipment_repository import ReservationEquipmentRepository
 from src.repository.reservation.reservation_repository import ReservationRepository
 
 class ReservationHandler:
     @staticmethod
-    def create_reservation(reservation: ReservationDTO) -> Optional[ReservationDTO]:
-        return ReservationRepository.create_reservation(reservation)
+    def create_reservation(
+        reservation: ReservationDTO,
+        equipments: list[ReservationRequestEquipmentItemDTO],
+    ) -> Optional[ReservationDTO]:
+        reservation = ReservationRepository.create_reservation(reservation)
+        for equipment in equipments:
+            for item_id in equipment.items:
+                reservation_equipment = ReservationEquipmentDTO(
+                    reservation_id=reservation.id,
+                    equipment_id=equipment.id,
+                    equipment_item_id=item_id,
+                )
+                ReservationEquipmentRepository.add_reservation_equipment(reservation_equipment)
+        
+        return reservation
 
     @staticmethod
     def get_reservation(id: int) -> Optional[ReservationDTO]:

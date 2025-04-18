@@ -1,7 +1,9 @@
+from random import choice
 import factory
 from database.factory.equipment_item_factory import EquipmentItemFactory
 from database.model.reservation_equipment import ReservationEquipment
 from database.postgres.database import PostgresDatabase
+from src.enum.reservation_equipment.mishandle_type_enum import MishandleTypeEnum
 
 class ReservationEquipmentFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
@@ -10,7 +12,20 @@ class ReservationEquipmentFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = 'commit'
 
     returned = True
-    mishandled = False
+    mishandled = factory.Faker('boolean')
+    mishandle_type = factory.LazyAttribute(
+        lambda obj: choice([
+            MishandleTypeEnum.MINOR_DAMAGE,
+            MishandleTypeEnum.NON_FUNCTIONAL,
+            MishandleTypeEnum.LOST,
+            MishandleTypeEnum.OTHER,
+        ]) if obj.mishandled else None
+    )
+    mishandle_description = factory.Maybe(
+        'mishandled',
+        yes_declaration=factory.Faker('sentence', nb_words=10),
+        no_declaration=None
+    )
     rating = factory.Faker('random_int', min=1, max=5)
     comment = factory.Faker('sentence', nb_words=10)
     admin_note = factory.Faker('sentence', nb_words=10)

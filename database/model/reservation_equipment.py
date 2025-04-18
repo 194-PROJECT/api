@@ -14,6 +14,8 @@ class ReservationEquipment(Base):
     equipment_item_id = Column(Integer, ForeignKey('equipment_item.id', ondelete='SET NULL'), index=True)
     returned = Column(Boolean, default=False)
     mishandled = Column(Boolean, default=False)
+    mishandle_type = Column(String(50), nullable=True)
+    mishandle_description = Column(String(255), nullable=True)
     rating = Column(Integer, nullable=True)
     comment = Column(String(255), nullable=True)
     admin_note = Column(String(255), nullable=True)

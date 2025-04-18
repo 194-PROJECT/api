@@ -64,7 +64,7 @@ class EquipmentFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_factory = PostgresDatabase.get_session
         sqlalchemy_session_persistence = 'commit'
 
-    name = factory.Faker('random_element', elements=('Laptop', 'Projector', 'Whiteboard', 'Printer', 'Scanner'))
+    name = factory.Faker('random_element', elements=names)
     description = factory.LazyAttribute(lambda obj: name_to_description[obj.name])
     category = factory.LazyAttribute(lambda obj: name_to_category[obj.name])
     purchase_date = factory.Faker('date_time_this_year')

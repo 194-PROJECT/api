@@ -1,6 +1,8 @@
 from flask import request
 from core.api import Api, response
 from src.dto.reservation.reservation_equipment_dto import ReservationEquipmentDTO
+from src.enum.reservation_equipment.mishandle_type_enum import MishandleTypeEnum
+from src.handler.equipment.equipment_item_handler import EquipmentItemHandler
 from src.handler.reservation.reservation_equipment_handler import ReservationEquipmentHandler
 
 app = Api.application
@@ -74,6 +76,27 @@ def update_reservation_equipment(id: int):
         )
 
     reservation_equipment_update_request = reservation_equipment.update(request.json)
+
+    if not reservation_equipment_update_request.mishandled:
+        reservation_equipment_update_request.mishandle_type = None
+        reservation_equipment_update_request.mishandle_description = None
+
+    if reservation_equipment_update_request.mishandle_type in (
+        MishandleTypeEnum.NON_FUNCTIONAL,
+        MishandleTypeEnum.LOST,
+    ):
+        equipment_item_id = reservation_equipment_update_request.equipment_item_id
+        equipment_item = EquipmentItemHandler.get_equipment_item(equipment_item_id)
+        if equipment_item is None:
+            return response(
+                message="Equipment item not found",
+                code=404,
+                errors=["Cannot update reservation equipment with a non-functional item that does not exist"],
+            )
+
+        equipment_item.update(data={"available": False})
+        EquipmentItemHandler.update_equipment_item(equipment_item_id, equipment_item)
+
     reservation_equipment = ReservationEquipmentHandler.update_reservation_equipment(id, reservation_equipment_update_request)
     
     return response(

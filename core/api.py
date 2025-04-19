@@ -173,8 +173,8 @@ class GetModelRequest(GetRequest):
         arbitrary_types_allowed=True,
     )
 
-    order_by: Optional[str] = DEFAULT_ORDER_BY
-    order_direction: Optional[OrderDirection] = OrderDirection.ASC
+    order_by: Optional[str] = None
+    order_direction: Optional[OrderDirection] = None
     order_by_clause: Optional[TextClause] = None
 
     field: Optional[str] = None
@@ -197,6 +197,9 @@ class GetModelRequest(GetRequest):
 
     @model_validator(mode="after")
     def build_order_clause(self, info: ValidationInfo) -> Self:
+        if not self.order_by or not self.order_direction:
+            return self
+
         table_keys: Enum = info.context['table_keys']
         model = info.context['model']
 

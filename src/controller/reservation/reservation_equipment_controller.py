@@ -1,5 +1,7 @@
 from flask import request
-from core.api import Api, response
+from core.api import Api, GetModelRequest, flatten_request_args, response
+from database.model.reservation import ReservationKeyEnum, ReservationKeyTypes
+from database.model.reservation_equipment import ReservationEquipment
 from src.dto.reservation.reservation_equipment_dto import ReservationEquipmentDTO
 from src.enum.reservation_equipment.mishandle_type_enum import MishandleTypeEnum
 from src.handler.equipment.equipment_item_handler import EquipmentItemHandler
@@ -24,24 +26,115 @@ def get_reservation_equipment(equipment_id: int):
         data=equipment.model_dump(),
     )
 
-@app.route('/reservation/<int:reservation_id>/equipment', methods=['GET'])
-def get_reservation_equipments(reservation_id: int):
-    reservation_equipments = ReservationEquipmentHandler.get_reservation_equipments(reservation_id)
+@app.route('/reservation/equipment', methods=['GET'])
+def get_all_reservation_equipments():
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
+        'model': ReservationEquipment,
+        'table_keys': ReservationKeyEnum,
+        'key_types': ReservationKeyTypes,
+    })
+
+    reservation_equipments = ReservationEquipmentHandler.get_reservation_equipments(
+        get_request.limit,
+        get_request.offset,
+        get_request.order_by_clause,
+        get_request.where_clause,
+    )
 
     if reservation_equipments is None:
         return response(
-            message="No equipment found for the reservation",
+            message="No equipment found",
             code=404,
-            errors=["Failed to retrieve equipment for the reservation"],
+            errors=["Failed to retrieve the requested equipment"],
         )
 
+    reservation_equipment_count = ReservationEquipmentHandler.get_reservation_equipment_count(
+        where_clause=get_request.where_clause,
+    )
+
     return response(
-        message="Equipment found for the reservation",
+        message="Equipment found",
         code=200,
         data=[
             reservation_equipment.model_dump()
             for reservation_equipment in reservation_equipments
         ],
+        total_rows=reservation_equipment_count,
+    )
+
+@app.route('/reservation/<int:reservation_id>/equipment', methods=['GET'])
+def get_reservation_equipments_from_reservation(reservation_id: int):
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
+        'model': ReservationEquipment,
+        'table_keys': ReservationKeyEnum,
+        'key_types': ReservationKeyTypes,
+    })
+
+    reservation_equipments = ReservationEquipmentHandler.get_reservation_equipments(
+        get_request.limit,
+        get_request.offset,
+        get_request.order_by_clause,
+        get_request.where_clause,
+        reservation_id=reservation_id,
+    )
+
+    if reservation_equipments is None:
+        return response(
+            message="No equipment found",
+            code=404,
+            errors=["Failed to retrieve the requested equipment"],
+        )
+
+    reservation_equipment_count = ReservationEquipmentHandler.get_reservation_equipment_count(
+        where_clause=get_request.where_clause,
+        reservation_id=reservation_id,
+    )
+
+    return response(
+        message="Equipment found",
+        code=200,
+        data=[
+            reservation_equipment.model_dump()
+            for reservation_equipment in reservation_equipments
+        ],
+        total_rows=reservation_equipment_count,
+    )
+
+@app.route('/reservation/equipment/data-request', methods=['GET'])
+def get_reservation_equipment_with_data_request():
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
+        'model': ReservationEquipment,
+        'table_keys': ReservationKeyEnum,
+        'key_types': ReservationKeyTypes,
+    })
+
+    reservation_equipments = ReservationEquipmentHandler.get_reservation_equipments_with_data_request(
+        get_request.limit,
+        get_request.offset,
+        get_request.order_by_clause,
+        get_request.where_clause,
+    )
+
+    if reservation_equipments is None:
+        return response(
+            message="No equipment found",
+            code=404,
+            errors=["Failed to retrieve the requested equipment"],
+        )
+
+    reservation_equipment_count = ReservationEquipmentHandler.get_reservation_equipment_count(
+        where_clause=get_request.where_clause,
+        with_data_request=True,
+    )
+
+    return response(
+        message="Equipment found",
+        code=200,
+        data=[
+            reservation_equipment.model_dump()
+            for reservation_equipment in reservation_equipments
+        ],
+        total_rows=reservation_equipment_count,
     )
 
 @app.route('/reservation/<int:reservation_id>/equipment', methods=['POST'])
@@ -76,6 +169,12 @@ def update_reservation_equipment(id: int):
         )
 
     reservation_equipment_update_request = reservation_equipment.update(request.json)
+    
+    if not reservation_equipment_update_request.data_requested:
+        reservation_equipment_update_request.data_requested = None
+        reservation_equipment_update_request.data_request_description = None
+        reservation_equipment_update_request.data_request_date = None
+        reservation_equipment_update_request.data_received = None
 
     if not reservation_equipment_update_request.mishandled:
         reservation_equipment_update_request.mishandle_type = None

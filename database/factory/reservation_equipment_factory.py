@@ -26,6 +26,22 @@ class ReservationEquipmentFactory(factory.alchemy.SQLAlchemyModelFactory):
         yes_declaration=factory.Faker('sentence', nb_words=10),
         no_declaration=None
     )
+    data_requested = factory.Maybe(
+        'mishandled',
+        yes_declaration=None,
+        no_declaration=factory.Faker('boolean')
+    )
+    data_received = factory.Faker('boolean')
+    data_request_description = factory.Maybe(
+        'data_requested',
+        yes_declaration=factory.Faker('sentence', nb_words=10),
+        no_declaration=None
+    )
+    data_request_date = factory.Maybe(
+        'data_requested',
+        yes_declaration=factory.Faker('date_time_this_year'),
+        no_declaration=None
+    )
     rating = factory.Faker('random_int', min=1, max=5)
     comment = factory.Faker('sentence', nb_words=10)
     admin_note = factory.Faker('sentence', nb_words=10)

@@ -1,4 +1,6 @@
 from typing import Optional
+
+from sqlalchemy import TextClause
 from src.dto.reservation.reservation_dto import ReservationDTO
 from src.dto.reservation.reservation_equipment_dto import ReservationEquipmentDTO, ReservationRequestEquipmentItemDTO
 from src.repository.reservation.reservation_equipment_repository import ReservationEquipmentRepository
@@ -30,8 +32,8 @@ class ReservationHandler:
     def get_reservations(
         limit: int,
         offset: int,
-        order_by_clause: Optional[str] = None,
-        where_clause: Optional[str] = None,
+        order_by_clause: Optional[TextClause] = None,
+        where_clause: Optional[TextClause] = None,
     ) -> Optional[list[ReservationDTO]]:
         return ReservationRepository.get_reservations(limit, offset, order_by_clause, where_clause)
 

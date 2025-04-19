@@ -2,6 +2,8 @@ from datetime import datetime
 from core.dto_base import DTO
 from typing import Optional
 
+from src.dto.user.user_dto import UserDTO
+
 class ReservationDTO(DTO):
     id: Optional[int] = 0
     user_id: int
@@ -18,3 +20,4 @@ class ReservationDTO(DTO):
     return_date: Optional[datetime] = None
     created_at: Optional[datetime] = datetime.now()
     updated_at: Optional[datetime] = datetime.now()
+    user: Optional[UserDTO] = None

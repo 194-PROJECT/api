@@ -118,7 +118,6 @@ class EquipmentRepository:
         )
 
         data = PostgresDatabase.get_session().execute(query).scalars().unique().all()
-        
         return [EquipmentDTO.model_validate(equipment) for equipment in data] if data else None
 
     @staticmethod

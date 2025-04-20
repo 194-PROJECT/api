@@ -42,13 +42,13 @@ class EquipmentItemRepository:
         equipment_id: Optional[int] = None,
     ) -> list[EquipmentItemDTO]:
         query = select(EquipmentItem).order_by(order_by_clause)
-        
+
         if where_clause is not None:
             query = query.where(where_clause)
-        
+
         if equipment_id is not None:
             query = query.where(EquipmentItem.equipment_id == equipment_id)
-        
+
         query = (
             query
             .limit(limit)

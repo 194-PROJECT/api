@@ -50,7 +50,13 @@ class EquipmentRepository:
         order_by_clause: Optional[TextClause],
         where_clause: Optional[TextClause],
     ) -> Optional[list[EquipmentDTO]]:
-        query = select(Equipment).order_by(order_by_clause)
+        query = (
+            select(Equipment)
+            .options(
+                orm.selectinload(Equipment.equipment_items),
+                orm.selectinload(Equipment.equipment_images),
+            ).order_by(order_by_clause)
+        )
 
         if where_clause is not None:
             query = query.where(where_clause)
@@ -59,14 +65,10 @@ class EquipmentRepository:
             query
             .limit(limit)
             .offset(offset)
-            .compile(
-                compile_kwargs={"literal_binds": True},
-                dialect=postgresql.dialect(),
-            )
         )
 
-        data = QueryExecutor.fetch_all(str(query))
-        return [EquipmentDTO(**equipment) for equipment in data] if data else None
+        data = PostgresDatabase.get_session().execute(query).scalars().unique().all()
+        return [EquipmentDTO.model_validate(equipment) for equipment in data] if data else None 
 
     @staticmethod
     def get_available_equipments(
@@ -105,6 +107,36 @@ class EquipmentRepository:
                 EquipmentItem.available.is_(True),
                 EquipmentItem.id.not_in(reserved_subq)
             )
+            .order_by(order_by_clause)
+        )
+
+        if where_clause is not None:
+            query = query.where(where_clause)
+
+        query = (
+            query
+            .limit(limit)
+            .offset(offset)
+        )
+
+        data = PostgresDatabase.get_session().execute(query).scalars().unique().all()
+        return [EquipmentDTO.model_validate(equipment) for equipment in data] if data else None
+
+    @staticmethod
+    def get_unavailable_equipments(
+        limit: int,
+        offset: int,
+        order_by_clause: Optional[TextClause],
+        where_clause: Optional[TextClause],
+    ) -> Optional[list[EquipmentDTO]]:
+        query = (
+            select(Equipment)
+            .options(
+                orm.contains_eager(Equipment.equipment_items),
+                orm.selectinload(Equipment.equipment_images),
+            )
+            .join(EquipmentItem, Equipment.id == EquipmentItem.equipment_id)
+            .where(EquipmentItem.available.is_(False))
             .order_by(order_by_clause)
         )
 

@@ -47,12 +47,28 @@ class ReservationEquipmentRepository:
         return [ReservationEquipmentDTO(**item) for item in data] if data else None
 
     @staticmethod
+    def get_reservation_equipments_from_reservation(
+        reservation_id: int,
+    ) -> Optional[List[ReservationEquipmentDTO]]:
+        query = (
+            select(ReservationEquipment)
+            .where(ReservationEquipment.reservation_id == reservation_id)
+            .compile(
+                compile_kwargs={"literal_binds": True},
+                dialect=postgresql.dialect(),
+            )
+        )
+        data = QueryExecutor.fetch_all(str(query))
+        return [ReservationEquipmentDTO(**item) for item in data] if data else None
+
+    @staticmethod
     def get_reservation_equipments_with_data_request(
         limit: int,
         offset: int,
         order_by_clause: Optional[TextClause],
         where_clause: Optional[TextClause],
         reservation_id: Optional[int] = None,
+        user_id: Optional[int] = None,
     ) -> Optional[List[ReservationEquipmentDTO]]:
         query = (
             select(ReservationEquipment)
@@ -70,6 +86,12 @@ class ReservationEquipmentRepository:
             query = query.where(where_clause)
         if reservation_id is not None:
             query = query.where(ReservationEquipment.reservation_id == reservation_id)
+        if user_id is not None:
+            query = (
+                query
+                .join(Reservation, ReservationEquipment.reservation_id == Reservation.id)
+                .where(Reservation.user_id == user_id)
+            )
 
         query = query.where(ReservationEquipment.data_requested).order_by(
             ReservationEquipment.data_received.asc(),
@@ -80,10 +102,51 @@ class ReservationEquipmentRepository:
         return [ReservationEquipmentDTO.model_validate(item) for item in data] if data else None
 
     @staticmethod
+    def get_reservation_equipments_with_mishandle(
+        limit: int,
+        offset: int,
+        order_by_clause: Optional[TextClause],
+        where_clause: Optional[TextClause],
+        reservation_id: Optional[int] = None,
+        user_id: Optional[int] = None,
+    ) -> Optional[List[ReservationEquipmentDTO]]:
+        query = (
+            select(ReservationEquipment)
+            .options(
+                orm.joinedload(ReservationEquipment.reservation).joinedload(Reservation.user),
+                orm.joinedload(ReservationEquipment.equipment),
+                orm.joinedload(ReservationEquipment.equipment_item),
+            )
+            .limit(limit)
+            .offset(offset)
+        )
+        if order_by_clause is not None:
+            query = query.order_by(order_by_clause)
+        if where_clause is not None:
+            query = query.where(where_clause)
+        if reservation_id is not None:
+            query = query.where(ReservationEquipment.reservation_id == reservation_id)
+        if user_id is not None:
+            query = (
+                query
+                .join(Reservation, ReservationEquipment.reservation_id == Reservation.id)
+                .where(Reservation.user_id == user_id)
+            )
+
+        query = query.where(ReservationEquipment.mishandled).order_by(
+            ReservationEquipment.id.desc(),
+        )
+
+        data = PostgresDatabase.get_session().execute(query).scalars().all()
+        return [ReservationEquipmentDTO.model_validate(item) for item in data] if data else None
+
+    @staticmethod
     def get_reservation_equipment_count(
         where_clause: Optional[TextClause] = None,
         reservation_id: Optional[int] = None,
+        user_id: Optional[int] = None,
         with_data_request: bool = False,
+        with_mishandle: bool = False,
     ) -> int:
         query = select(func.count(ReservationEquipment.id).label("count"))
 
@@ -91,8 +154,17 @@ class ReservationEquipmentRepository:
             query = query.where(where_clause)
         if reservation_id is not None:
             query = query.where(ReservationEquipment.reservation_id == reservation_id)
+        if user_id is not None:
+            query = (
+                query
+                .join(Reservation, ReservationEquipment.reservation_id == Reservation.id)
+                .where(Reservation.user_id == user_id)
+            )
         if with_data_request:
             query = query.where(ReservationEquipment.data_requested)
+        if with_mishandle:
+            query = query.where(ReservationEquipment.mishandled)
+        
 
         query = query.compile(
             compile_kwargs={"literal_binds": True},
@@ -100,21 +172,6 @@ class ReservationEquipmentRepository:
         )
         data = QueryExecutor.fetch_one(str(query))
         return data["count"] if data else 0
-
-    @staticmethod
-    def get_reservation_equipments_from_reservation(
-        reservation_id: int,
-    ) -> Optional[List[ReservationEquipmentDTO]]:
-        query = (
-            select(ReservationEquipment)
-            .where(ReservationEquipment.reservation_id == reservation_id)
-            .compile(
-                compile_kwargs={"literal_binds": True},
-                dialect=postgresql.dialect(),
-            )
-        )
-        data = QueryExecutor.fetch_all(str(query))
-        return [ReservationEquipmentDTO(**item) for item in data] if data else None
 
     @staticmethod
     def add_reservation_equipment(

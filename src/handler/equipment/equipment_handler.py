@@ -33,14 +33,30 @@ class EquipmentHandler:
         start_date: datetime,
         end_date: datetime
     ) -> Optional[list[EquipmentDTO]]:
-        return EquipmentRepository.get_available_equipments(
-            limit,
-            offset,
-            order_by_clause,
-            where_clause,
-            start_date,
-            end_date
+        equipments = EquipmentRepository.get_available_equipments(
+            limit=limit,
+            offset=offset,
+            order_by_clause=order_by_clause,
+            where_clause=where_clause,
+            start_date=start_date,
+            end_date=end_date
         )
+        return equipments
+
+    @staticmethod
+    def get_unavailable_equipments(
+        limit: int,
+        offset: int,
+        order_by_clause: TextClause,
+        where_clause: Optional[TextClause],
+    ) -> Optional[list[EquipmentDTO]]:
+        equipments = EquipmentRepository.get_unavailable_equipments(
+            limit=limit,
+            offset=offset,
+            order_by_clause=order_by_clause,
+            where_clause=where_clause
+        )
+        return equipments
 
     @staticmethod
     def get_equipment_reservations(

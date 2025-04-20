@@ -9,3 +9,4 @@ class EquipmentItemDTO(DTO):
     available: bool
     created_at: Optional[datetime] = datetime.now()
     updated_at: Optional[datetime] = datetime.now()
+

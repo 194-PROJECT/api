@@ -32,6 +32,7 @@ class ReservationEquipmentHandler:
         order_by_clause: Optional[TextClause] = None,
         where_clause: Optional[TextClause] = None,
         reservation_id: Optional[int] = None,
+        user_id: Optional[int] = None,
     ) -> Optional[List[ReservationEquipmentDTO]]:
         return ReservationEquipmentRepository.get_reservation_equipments_with_data_request(
             limit=limit,
@@ -39,18 +40,41 @@ class ReservationEquipmentHandler:
             order_by_clause=order_by_clause,
             where_clause=where_clause,
             reservation_id=reservation_id,
+            user_id=user_id,
+        )
+
+    @staticmethod
+    def get_reservation_equipments_with_mishandle(
+        limit: int,
+        offset: int,
+        order_by_clause: Optional[TextClause] = None,
+        where_clause: Optional[TextClause] = None,
+        reservation_id: Optional[int] = None,
+        user_id: Optional[int] = None,
+    ) -> Optional[List[ReservationEquipmentDTO]]:
+        return ReservationEquipmentRepository.get_reservation_equipments_with_mishandle(
+            limit=limit,
+            offset=offset,
+            order_by_clause=order_by_clause,
+            where_clause=where_clause,
+            reservation_id=reservation_id,
+            user_id=user_id,
         )
 
     @staticmethod
     def get_reservation_equipment_count(
         where_clause: Optional[TextClause] = None,
         reservation_id: Optional[int] = None,
+        user_id: Optional[int] = None,
         with_data_request: bool = False,
+        with_mishandle: bool = False,
     ) -> int:
         return ReservationEquipmentRepository.get_reservation_equipment_count(
             where_clause=where_clause,
             reservation_id=reservation_id,
+            user_id=user_id,
             with_data_request=with_data_request,
+            with_mishandle=with_mishandle,
         )
 
     @staticmethod

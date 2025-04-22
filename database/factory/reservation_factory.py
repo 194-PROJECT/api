@@ -13,15 +13,27 @@ class ReservationFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = 'commit'
 
     start_date = factory.Faker('date_time_this_year', after_now=True, before_now=False)
-    end_date = factory.LazyAttribute(lambda obj: obj.start_date + timedelta(hours=randint(1, 24), minutes=randint(0, 59)))
-    accepted = True
-    claimed = False
-    returned = False
+    end_date = factory.LazyAttribute(lambda obj: obj.start_date + timedelta(hours=randint(1, 6), minutes=randint(0, 59)))
+    accepted = factory.Faker('boolean')
+    claimed = factory.Maybe(
+        'accepted',
+        yes_declaration=factory.Faker('boolean', chance_of_getting_true=50),
+        no_declaration=False,
+    )
+    returned = factory.Maybe(
+        'claimed',
+        yes_declaration=factory.Faker('boolean', chance_of_getting_true=50),
+        no_declaration=False,
+    )
     reason = factory.Faker('sentence', nb_words=12, variable_nb_words=True)
     admin_note = factory.Faker('sentence', nb_words=12, variable_nb_words=True)
     return_note = factory.Faker('sentence', nb_words=12, variable_nb_words=True)
-    return_date = factory.Faker('date_time_this_year')
-    created_at = factory.Faker('date_time_this_year')
+    return_date = factory.Maybe(
+        'returned',
+        yes_declaration=factory.LazyAttribute(lambda obj: obj.end_date + timedelta(hours=randint(1, 24), minutes=randint(0, 59))),
+        no_declaration=None,
+    )
+    created_at = factory.LazyAttribute(lambda obj: obj.start_date - timedelta(hours=randint(1, 24), minutes=randint(0, 59)))
     updated_at = factory.Faker('date_time_this_year')
     # Foreign key and relationship
     user = factory.SubFactory(UserFactory)

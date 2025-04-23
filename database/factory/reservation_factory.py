@@ -1,5 +1,5 @@
 from datetime import timedelta
-from random import randint
+from random import choice, randint
 import factory
 from database.factory.users_factory import UserFactory
 from database.factory.groups_factory import GroupFactory
@@ -9,12 +9,12 @@ from database.model.reservation import Reservation
 class ReservationFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Reservation
-        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
     start_date = factory.Faker('date_time_this_year', after_now=True, before_now=False)
     end_date = factory.LazyAttribute(lambda obj: obj.start_date + timedelta(hours=randint(1, 6), minutes=randint(0, 59)))
-    accepted = factory.Faker('boolean')
+    accepted = factory.Faker('boolean', chance_of_getting_true=95)
     claimed = factory.Maybe(
         'accepted',
         yes_declaration=factory.Faker('boolean', chance_of_getting_true=50),
@@ -30,7 +30,10 @@ class ReservationFactory(factory.alchemy.SQLAlchemyModelFactory):
     return_note = factory.Faker('sentence', nb_words=12, variable_nb_words=True)
     return_date = factory.Maybe(
         'returned',
-        yes_declaration=factory.LazyAttribute(lambda obj: obj.end_date + timedelta(hours=randint(1, 24), minutes=randint(0, 59))),
+        yes_declaration=factory.LazyAttribute(lambda obj: choice([
+            obj.end_date + timedelta(hours=randint(1, 24), minutes=randint(0, 59)),
+            obj.end_date - timedelta(minutes=randint(0, 5)),
+        ])),
         no_declaration=None,
     )
     created_at = factory.LazyAttribute(lambda obj: obj.start_date - timedelta(hours=randint(1, 24), minutes=randint(0, 59)))

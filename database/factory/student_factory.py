@@ -10,7 +10,7 @@ def generate_student_id():
 class StudentFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Student
-        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
     student_id = factory.LazyFunction(generate_student_id)

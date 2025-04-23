@@ -5,7 +5,7 @@ from database.postgres.database import PostgresDatabase
 class AssetImageFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = AssetImage
-        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
     image_url = factory.Faker('random_element', elements=(

@@ -6,7 +6,7 @@ from database.factory.users_factory import UserFactory
 class GroupUserFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = GroupUser
-        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
     created_at = factory.Faker('date_time_this_year')

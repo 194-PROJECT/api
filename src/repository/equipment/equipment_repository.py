@@ -67,8 +67,13 @@ class EquipmentRepository:
             .offset(offset)
         )
 
-        data = PostgresDatabase.get_session().execute(query).scalars().unique().all()
-        return [EquipmentDTO.model_validate(equipment) for equipment in data] if data else None 
+        session = PostgresDatabase.get_session()
+        try:
+            data = session.execute(query).scalars().unique().all()
+            return [EquipmentDTO.model_validate(equipment) for equipment in data] if data else None 
+        finally:
+            session.close()
+
 
     @staticmethod
     def get_available_equipments(
@@ -119,8 +124,12 @@ class EquipmentRepository:
             .offset(offset)
         )
 
-        data = PostgresDatabase.get_session().execute(query).scalars().unique().all()
-        return [EquipmentDTO.model_validate(equipment) for equipment in data] if data else None
+        session = PostgresDatabase.get_session()
+        try:
+            data = session.execute(query).scalars().unique().all()
+            return [EquipmentDTO.model_validate(equipment) for equipment in data] if data else None
+        finally:
+            session.close()
 
     @staticmethod
     def get_unavailable_equipments(
@@ -149,8 +158,12 @@ class EquipmentRepository:
             .offset(offset)
         )
 
-        data = PostgresDatabase.get_session().execute(query).scalars().unique().all()
-        return [EquipmentDTO.model_validate(equipment) for equipment in data] if data else None
+        session = PostgresDatabase.get_session()
+        try:
+            data = session.execute(query).scalars().unique().all()
+            return [EquipmentDTO.model_validate(equipment) for equipment in data] if data else None
+        finally:
+            session.close()
 
     @staticmethod
     def get_equipment_count(where_clause: Optional[TextClause]) -> int:

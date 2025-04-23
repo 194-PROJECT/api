@@ -10,7 +10,7 @@ from src.handler.user.user_handler import UserHandler
 class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = User
-        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
     
     class Params:

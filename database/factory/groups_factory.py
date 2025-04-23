@@ -13,7 +13,7 @@ group_names = [
 class GroupFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Group
-        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
     name = factory.Faker('random_element', elements=group_names)

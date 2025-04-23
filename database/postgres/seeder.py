@@ -6,8 +6,8 @@ import factory
 
 from typing import TypedDict, Dict, Any
 
-import database.factory
 import database.model
+from database.postgres.database import PostgresDatabase
 
 class ModelMetadata(TypedDict):
     table_name: str
@@ -70,6 +70,7 @@ class DataSeeder:
                 obj.create_batch(size=included_model["population"])
 
     def seed(self):
+        PostgresDatabase.new_seed_session()
         model_metadata = self.get_model_metadata()
 
         if not self.include_models:

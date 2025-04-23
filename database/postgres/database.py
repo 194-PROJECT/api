@@ -13,6 +13,7 @@ from database.postgres.config import (
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+seed_session = SessionLocal()
 session = SessionLocal()
 
 class PostgresDatabase:
@@ -73,4 +74,13 @@ class PostgresDatabase:
     
     @staticmethod
     def get_session():
-        return session
+        return SessionLocal()
+
+    @staticmethod
+    def get_seed_session():
+        return seed_session
+
+    @staticmethod
+    def new_seed_session():
+        global seed_session
+        seed_session = PostgresDatabase.get_session()

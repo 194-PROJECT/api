@@ -146,6 +146,7 @@ async def update_user(id: int):
             errors=["Cannot update user that does not exist"],
         )
 
+    previous_password = user.password
     user_update_request = user.update(data=request.json, debug=True)
     user_update_request.role = UserHandler.user_type_to_role_map[user_update_request.type]
 
@@ -166,7 +167,7 @@ async def update_user(id: int):
     # This is a security measure to ensure that the user is aware of the password change.
     if (
         'password' in request.json and
-        not auth_helper.verify_password(user_update_request.password, user.password)
+        not auth_helper.verify_password(user_update_request.password, previous_password)
     ):
         decrypted_password = auth_helper.decrypt(user_update_request.password)
         user_update_request.password = auth_helper.hash_password(decrypted_password)

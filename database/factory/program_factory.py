@@ -47,7 +47,7 @@ program_names = [
 class ProgramFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Program
-        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
     title = factory.Faker('random_element', elements=program_names)

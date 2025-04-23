@@ -6,7 +6,7 @@ from database.postgres.database import PostgresDatabase
 class EquipmentItemFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = EquipmentItem
-        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
     item_code = factory.Faker('uuid4')  # Generate a unique item code

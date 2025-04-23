@@ -98,8 +98,12 @@ class ReservationEquipmentRepository:
             ReservationEquipment.id.desc(),
         )
 
-        data = PostgresDatabase.get_session().execute(query).scalars().all()
-        return [ReservationEquipmentDTO.model_validate(item) for item in data] if data else None
+        session = PostgresDatabase.get_session()
+        try:
+            data = session.execute(query).scalars().unique().all()
+            return [ReservationEquipmentDTO.model_validate(item) for item in data] if data else None
+        finally:
+            session.close()
 
     @staticmethod
     def get_reservation_equipments_with_mishandle(
@@ -137,8 +141,12 @@ class ReservationEquipmentRepository:
             ReservationEquipment.id.desc(),
         )
 
-        data = PostgresDatabase.get_session().execute(query).scalars().all()
-        return [ReservationEquipmentDTO.model_validate(item) for item in data] if data else None
+        session = PostgresDatabase.get_session()
+        try:
+            data = session.execute(query).scalars().unique().all()
+            return [ReservationEquipmentDTO.model_validate(item) for item in data] if data else None
+        finally:
+            session.close()
 
     @staticmethod
     def get_reservation_equipment_count(

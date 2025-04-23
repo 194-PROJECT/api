@@ -12,7 +12,7 @@ def random_semester_name():
 class SemesterFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Semester
-        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
     name = factory.LazyFunction(random_semester_name)

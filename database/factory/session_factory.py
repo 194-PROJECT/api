@@ -8,7 +8,7 @@ from database.model.session import Session
 class SessionFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Session
-        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
     token = factory.LazyFunction(lambda: secrets.token_hex(36))

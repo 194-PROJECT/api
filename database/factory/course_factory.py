@@ -56,7 +56,7 @@ course_names = [
 class CourseFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = Course
-        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
     name = factory.Faker('random_element', elements=course_names)
@@ -71,7 +71,7 @@ class CourseFactory(factory.alchemy.SQLAlchemyModelFactory):
         factory_related_name='course'
     )
     program = factory.SubFactory('database.factory.program_factory.ProgramFactory')
-    
+
     # @factory.post_generation
     # def set_prerequisites(obj, create, extracted, **kwargs):
     #     if not create:

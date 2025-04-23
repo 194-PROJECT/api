@@ -9,7 +9,7 @@ from src.enum.time.day_enum import DayEnum
 class ClassScheduleFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
         model = ClassSchedule
-        sqlalchemy_session_factory = PostgresDatabase.get_session
+        sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
     day = factory.LazyFunction(lambda: choice(list(DayEnum)))

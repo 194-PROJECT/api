@@ -25,10 +25,10 @@ class ReservationEquipmentRepository:
 
     @staticmethod
     def get_reservation_equipments(
-        limit: int,
-        offset: int,
-        order_by_clause: Optional[TextClause],
-        where_clause: Optional[TextClause],
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
+        order_by_clause: Optional[TextClause] = None,
+        where_clause: Optional[TextClause] = None,
         reservation_id: Optional[int] = None,
     ) -> Optional[List[ReservationEquipmentDTO]]:
         query = select(ReservationEquipment).limit(limit).offset(offset)

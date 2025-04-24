@@ -5,6 +5,7 @@ from core.api import Api, GetModelRequest, flatten_request_args, response
 from database.model.reservation import Reservation, ReservationKeyEnum, ReservationKeyTypes
 from src.dto.reservation.reservation_dto import ReservationDTO
 from src.dto.reservation.reservation_equipment_dto import ReservationRequestEquipmentItemDTO
+from src.handler.reservation.reservation_equipment_handler import ReservationEquipmentHandler
 from src.handler.reservation.reservation_handler import ReservationHandler
 
 app = Api.application
@@ -131,10 +132,22 @@ def update_reservation(id: int):
         )
 
     previous_return_status = reservation.returned
-    reservation_update_request = reservation.update(request.json, debug=True)
+    reservation_update_request = reservation.update(request.json)
 
     if previous_return_status != reservation_update_request.returned:
-        reservation_update_request.return_date = datetime.now()
+        reservation_equipments = ReservationEquipmentHandler.get_reservation_equipments(
+            reservation_id=id
+        )
+        match reservation_update_request.returned:
+            case True:
+                reservation_update_request.return_date = datetime.now()
+                for reservation_equipment in reservation_equipments:
+                    reservation_equipment.returned = True
+                    ReservationEquipmentHandler.update_reservation_equipment(
+                        reservation_equipment.id, reservation_equipment
+                    )
+            case False:
+                reservation_update_request.return_date = None
 
     if reservation.start_date > reservation.end_date:
         return response(

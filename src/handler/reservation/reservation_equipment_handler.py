@@ -11,8 +11,8 @@ class ReservationEquipmentHandler:
 
     @staticmethod
     def get_reservation_equipments(
-        limit: int,
-        offset: int,
+        limit: Optional[int] = None,
+        offset: Optional[int] = None,
         order_by_clause: Optional[TextClause] = None,
         where_clause: Optional[TextClause] = None,
         reservation_id: Optional[int] = None,
@@ -83,6 +83,7 @@ class ReservationEquipmentHandler:
 
     @staticmethod
     def update_reservation_equipment(id: int, reservation_equipment: ReservationEquipmentDTO) -> Optional[ReservationEquipmentDTO]:
+        print(f"Updating reservation equipment with ID {id} and data {reservation_equipment.model_dump()}")
         return ReservationEquipmentRepository.update_reservation_equipment(id, reservation_equipment)
 
     @staticmethod

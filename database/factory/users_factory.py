@@ -32,6 +32,7 @@ class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
                                                 UserTypeEnum.ALUMNI
                                             ]))
     role = factory.LazyAttribute(lambda obj: UserHandler.user_type_to_role_map[obj.type])
+    phone_number = factory.Faker('phone_number')
     profile_picture_url = factory.Faker('image_url')
     created_at = factory.Faker('date_time_this_year')
     updated_at = factory.Faker('date_time_this_year')

@@ -20,6 +20,7 @@ class UserRepository:
                 password=hash_password(user.password),
                 type=user.type,
                 role=user.role,
+                phone_number=user.phone_number,
                 profile_picture_url=user.profile_picture_url,
             )
             .returning("*")
@@ -112,6 +113,7 @@ class UserRepository:
                 password=user.password,
                 type=user.type,
                 role=user.role,
+                phone_number=user.phone_number,
                 profile_picture_url=user.profile_picture_url,
             )
             .returning("*")

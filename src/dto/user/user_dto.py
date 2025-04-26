@@ -15,6 +15,7 @@ class UserDTO(DTO):
     password: Optional[str]
     type: Optional[UserTypeEnum] = UserTypeEnum.GUEST
     role: Optional[UserRoleEnum] = UserRoleEnum.GUEST
+    phone_number: Optional[str] = None
     profile_picture_url: Optional[str] = None
     created_at: Optional[datetime] = datetime.now()
     updated_at: Optional[datetime] = datetime.now()

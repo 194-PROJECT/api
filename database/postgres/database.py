@@ -11,10 +11,12 @@ from database.postgres.config import (
     DATABASE_URL,
 )
 
+# Create a connection pool
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 seed_session = SessionLocal()
 session = SessionLocal()
+print(f"\033[94mConnected to PostgreSQL database: {engine.url}\033[0m")
 
 class PostgresDatabase:
     _instance: Optional["PostgresDatabase"] = None

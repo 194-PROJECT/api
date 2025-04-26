@@ -4,6 +4,10 @@ from core.api import Api
 import os
 import importlib
 import pkgutil
+import dotenv
+
+# Initialize the environment variables
+dotenv.load_dotenv(override=True)
 
 WEBAPP_URL = os.getenv('WEBAPP_URL', 'http://localhost:5173')
 

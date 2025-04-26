@@ -1,5 +1,9 @@
 from argparse import ArgumentParser
 from database.postgres.seeder import DataSeeder as PostgresDataSeeder, IncludedModel
+import dotenv
+
+# Initialize the environment variables
+dotenv.load_dotenv(override=True)
 
 default_population = 10
 default_include_models = [

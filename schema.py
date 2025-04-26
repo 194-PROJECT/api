@@ -1,5 +1,9 @@
 from argparse import ArgumentParser
 from database.postgres.schema import initialize_database_tables
+import dotenv
+
+# Initialize the environment variables
+dotenv.load_dotenv(override=True)
 
 def main(database):
     handlers = {

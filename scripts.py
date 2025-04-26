@@ -3,6 +3,10 @@ import os
 import importlib.util
 from typing import Callable
 import argparse
+import dotenv
+
+# Initialize the environment variables
+dotenv.load_dotenv(override=True)
 
 script_mapping = dict[str, dict[str, Callable]]
 

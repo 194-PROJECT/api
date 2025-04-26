@@ -23,6 +23,7 @@ class Class(Base):
     # 'To' Relationships
     groups = orm.relationship("Group", back_populates="class_")
     class_schedules = orm.relationship("ClassSchedule", back_populates="class_")
+    reservations = orm.relationship("Reservation", back_populates="class_")
 
 ClassKeyEnum = Enum('ClassKeyEnum', {
     column.capitalize(): column for column in Class.__table__.columns.keys()

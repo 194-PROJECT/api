@@ -2,6 +2,8 @@ from datetime import datetime
 from core.dto_base import DTO
 from typing import Optional
 
+from src.dto.course.course_dto import CourseDTO
+
 class ClassDTO(DTO):
     id: Optional[int] = 0
     course_id: int
@@ -11,3 +13,4 @@ class ClassDTO(DTO):
     description: Optional[str]
     created_at: Optional[datetime] = datetime.now()
     updated_at: Optional[datetime] = datetime.now()
+    course: Optional[CourseDTO] = None

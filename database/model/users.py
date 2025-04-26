@@ -22,7 +22,7 @@ class User(Base):
     instructed_classes = orm.relationship("Class", back_populates="instructor")
     reservations = orm.relationship("Reservation", back_populates="user", foreign_keys="Reservation.user_id")
     reservations_checked_by = orm.relationship("Reservation", back_populates="admin", foreign_keys="Reservation.admin_id")
-    groups = orm.relationship("GroupUser", back_populates="users")
+    groups = orm.relationship("GroupUser", back_populates="user")
 
 UserKeyEnum = Enum('UserKeyEnum', {
     column.upper(): column for column in User.__table__.columns.keys()

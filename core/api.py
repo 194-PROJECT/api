@@ -278,9 +278,9 @@ class GetModelRequest(GetRequest):
 
         match self.operator:
             case SqlOperator.LIKE:
-                self.where_clause = TextClause(f"LOWER({model.__table__}.{self.field}) {self.operator.value} '%{self.value.replace('\'', '')}%'")
+                self.where_clause = TextClause(f"LOWER({model.__table__}.{self.field}) {self.operator.value} '%{self.value.replace('\'', '').lower()}%'")
             case SqlOperator.NOT_LIKE:
-                self.where_clause = TextClause(f"LOWER({model.__table__}.{self.field}) {self.operator.value} '%{self.value.replace('\'', '')}%'")
+                self.where_clause = TextClause(f"LOWER({model.__table__}.{self.field}) {self.operator.value} '%{self.value.replace('\'', '').lower()}%'")
             case SqlOperator.IS_NULL:
                 self.where_clause = TextClause(f"{model.__table__}.{self.field} {self.operator.value}")
             case SqlOperator.IS_NOT_NULL:

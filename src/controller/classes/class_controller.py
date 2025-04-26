@@ -56,6 +56,38 @@ def get_classes():
         total_rows=class_count,
     )
 
+@app.route('/class/current-semester', methods=['GET'])
+def get_classes_by_current_semester():
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
+        'model': Class,
+        'table_keys': ClassKeyEnum,
+        'key_types': ClassKeyTypes,
+    })
+
+    classes = ClassHandler.get_classes_by_current_semester(
+        get_request.limit,
+        get_request.offset,
+        get_request.order_by_clause,
+        get_request.where_clause,
+    )
+
+    if classes is None:
+        return response(
+            message="No classes found",
+            code=404,
+            errors=["Failed to retrieve any classes"],
+        )
+
+    class_count = ClassHandler.get_class_count(get_request.where_clause)
+
+    return response(
+        message="Classes found",
+        code=200,
+        data=[class_.model_dump() for class_ in classes],
+        page=get_request.page,
+        total_rows=class_count,
+    )
+
 @app.route('/class/count', methods=['GET'])
 def get_class_count():
     get_request = GetModelRequest.model_validate(flatten_request_args(request), context={

@@ -1,6 +1,8 @@
+from database.model.group_user import GroupUser
+from database.postgres.database import PostgresDatabase
 from database.postgres.query import QueryExecutor
 from database.model.groups import Group
-from sqlalchemy import TextClause, delete, insert, select, update
+from sqlalchemy import TextClause, delete, insert, select, update, orm
 from sqlalchemy.dialects import postgresql
 from typing import Optional
 
@@ -27,12 +29,18 @@ class GroupRepository:
     
     @staticmethod
     def get_group(id: int) -> Optional[GroupDTO]:
-        query = select(Group).where(Group.id == id).compile(
-            compile_kwargs={"literal_binds": True},
-            dialect=postgresql.dialect(),
-        )
-        data = QueryExecutor.fetch_one(str(query))
-        return GroupDTO(**data) if data else None
+        query = select(Group).where(Group.id == id).options(
+                orm.selectinload(
+                    Group.users
+                ).selectinload(GroupUser.user)
+            )
+        
+        session = PostgresDatabase.get_session()
+        try:
+            data = session.execute(query).scalars().unique().one_or_none()
+            return GroupDTO.model_validate(data) if data else None
+        finally:
+            session.close()
 
     @staticmethod
     def get_groups(
@@ -41,7 +49,11 @@ class GroupRepository:
         order_by_clause: Optional[TextClause],
         where_clause: Optional[TextClause],
     ) -> Optional[list[GroupDTO]]:
-        query = select(Group).order_by(order_by_clause)
+        query = select(Group).order_by(order_by_clause).options(
+            orm.selectinload(
+                Group.users
+            ).selectinload(GroupUser.user)
+        )
 
         if where_clause is not None:
             query = query.where(where_clause)
@@ -50,14 +62,14 @@ class GroupRepository:
             query
             .limit(limit)
             .offset(offset)
-            .compile(
-                compile_kwargs={"literal_binds": True},
-                dialect=postgresql.dialect(),
-            )
         )
 
-        data = QueryExecutor.fetch_all(str(query))
-        return [GroupDTO(**group) for group in data] if data else None
+        session = PostgresDatabase.get_session()
+        try:
+            data = session.execute(query).scalars().unique().all()
+            return [GroupDTO.model_validate(reservation) for reservation in data] if data else None
+        finally:
+            session.close()
 
     @staticmethod
     def get_group_count(where_clause: Optional[TextClause]) -> int:

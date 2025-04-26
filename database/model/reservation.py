@@ -10,6 +10,7 @@ class Reservation(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id', ondelete="SET NULL"), index=True)
     admin_id = Column(Integer, ForeignKey('users.id', ondelete="SET NULL"), index=True)
+    class_id = Column(Integer, ForeignKey('classes.id', ondelete="SET NULL"), index=True)
     group_id = Column(Integer, ForeignKey('groups.id', ondelete="SET NULL"), index=True)
     start_date = Column(DateTime(timezone=True), nullable=False, index=True)
     end_date = Column(DateTime(timezone=True), nullable=False, index=True)
@@ -25,7 +26,8 @@ class Reservation(Base):
     # 'From' Relationships
     user = orm.relationship(User, back_populates="reservations", foreign_keys=[user_id])
     admin = orm.relationship(User, back_populates="reservations_checked_by", foreign_keys=[admin_id])
-    group = orm.relationship(Group, back_populates="reservations")
+    group = orm.relationship(Group, back_populates="reservations", foreign_keys=[group_id])
+    class_ = orm.relationship("Class", back_populates="reservations", foreign_keys=[class_id])
     # 'To' Relationships
     reservation_equipments = orm.relationship("ReservationEquipment", back_populates="reservation")
 

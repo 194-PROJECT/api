@@ -1,4 +1,6 @@
 import factory
+from database.factory.classes_factory import ClassFactory
+from database.factory.semester_factory import SemesterFactory
 from database.postgres.database import PostgresDatabase
 from database.model.course import Course
 
@@ -59,18 +61,28 @@ class CourseFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
+    # Generate multiple semesters to assign to classes
+    _semesters = SemesterFactory.create_batch(3)
+
     name = factory.Faker('random_element', elements=course_names)
     description = factory.Faker('text')
     credits = factory.Faker('random_int', min=1, max=5)
     created_at = factory.Faker('date_time_this_year')
     updated_at = factory.Faker('date_time_this_year')
-    # Foreign key and relationship
-    classes = factory.RelatedFactoryList(
-        'database.factory.classes_factory.ClassFactory',
-        size=1,
-        factory_related_name='course'
-    )
+
     program = factory.SubFactory('database.factory.program_factory.ProgramFactory')
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        # Create the course first
+        instance = super()._create(model_class, *args, **kwargs)
+
+        # Now create the classes and associate them with the course and semesters
+        for i in range(5):
+            semester = cls._semesters[i % len(cls._semesters)]
+            ClassFactory(course=instance, semester=semester)  # Pass course and semester
+
+        return instance
 
     # @factory.post_generation
     # def set_prerequisites(obj, create, extracted, **kwargs):

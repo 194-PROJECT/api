@@ -83,7 +83,6 @@ class ReservationEquipmentHandler:
 
     @staticmethod
     def update_reservation_equipment(id: int, reservation_equipment: ReservationEquipmentDTO) -> Optional[ReservationEquipmentDTO]:
-        print(f"Updating reservation equipment with ID {id} and data {reservation_equipment.model_dump()}")
         return ReservationEquipmentRepository.update_reservation_equipment(id, reservation_equipment)
 
     @staticmethod

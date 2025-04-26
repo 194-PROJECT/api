@@ -1,14 +1,10 @@
+from random import choice
 import factory
+from database.model.classes import Class
 from database.model.groups import Group
 from database.postgres.database import PostgresDatabase
 
-group_names = [
-    'Group A',
-    'Group B',
-    'Group C',
-    'Group D',
-    'Group E',
-]
+group_names = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Theta', 'Sigma', 'Omega']
 
 class GroupFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
@@ -16,7 +12,7 @@ class GroupFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_factory = PostgresDatabase.get_seed_session
         sqlalchemy_session_persistence = 'commit'
 
-    name = factory.Faker('random_element', elements=group_names)
+    name = factory.LazyAttribute(lambda obj: obj.class_.name + ' ' + choice(group_names))
     description = 'A random group description'
     created_at = factory.Faker('date_time_this_year')
     updated_at = factory.Faker('date_time_this_year')
@@ -26,4 +22,6 @@ class GroupFactory(factory.alchemy.SQLAlchemyModelFactory):
         size=1,
         factory_related_name='group'
     )
-    class_ = factory.SubFactory('database.factory.classes_factory.ClassFactory')
+    class_ = factory.LazyFunction(
+        lambda: choice(PostgresDatabase.get_seed_session().query(Class).all())
+    )

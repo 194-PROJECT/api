@@ -35,6 +35,7 @@ def get_reservations():
         'key_types': ReservationKeyTypes,
     })
 
+    print(get_request.where_clause)
     reservations = ReservationHandler.get_reservations(
         get_request.limit,
         get_request.offset,
@@ -50,6 +51,42 @@ def get_reservations():
         )
 
     reservation_count = ReservationHandler.get_reservation_count(get_request.where_clause)
+
+    return response(
+        message="Reservations found",
+        code=200,
+        data=[reservation.model_dump() for reservation in reservations],
+        page=get_request.page,
+        total_rows=reservation_count,
+    )
+
+@app.route('/reservation/user/<int:user_id>', methods=['GET'])
+def get_user_reservations(user_id: int):
+    get_request = GetModelRequest.model_validate(flatten_request_args(request), context={
+        'model': Reservation,
+        'table_keys': ReservationKeyEnum,
+        'key_types': ReservationKeyTypes,
+    })
+
+    reservations = ReservationHandler.get_user_reservations(
+        user_id,
+        get_request.limit,
+        get_request.offset,
+        get_request.order_by_clause,
+        get_request.where_clause,
+    )
+
+    if reservations is None:
+        return response(
+            message="No reservations found",
+            code=404,
+            errors=["Failed to retrieve any reservations"],
+        )
+
+    reservation_count = ReservationHandler.get_reservation_count(
+        user_id=user_id,
+        where_clause=get_request.where_clause,
+    )
 
     return response(
         message="Reservations found",

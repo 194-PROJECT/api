@@ -1,13 +1,17 @@
 from datetime import datetime
+
 from core.dto_base import DTO
 from typing import Optional
 
+from src.dto.classes.class_dto import ClassDTO
+from src.dto.group.group_dto import GroupDTO
 from src.dto.user.user_dto import UserDTO
 
 class ReservationDTO(DTO):
     id: Optional[int] = 0
     user_id: int
     admin_id: Optional[int] = None
+    class_id: Optional[int] = None
     group_id: Optional[int] = None
     start_date: datetime
     end_date: datetime
@@ -21,3 +25,6 @@ class ReservationDTO(DTO):
     created_at: Optional[datetime] = datetime.now()
     updated_at: Optional[datetime] = datetime.now()
     user: Optional[UserDTO] = None
+    admin: Optional[UserDTO] = None
+    class_: Optional[ClassDTO] = None
+    group: Optional[GroupDTO] = None

@@ -3,8 +3,11 @@ from random import choice, randint
 import factory
 from database.factory.users_factory import UserFactory
 from database.factory.groups_factory import GroupFactory
+from database.model.classes import Class
 from database.postgres.database import PostgresDatabase
 from database.model.reservation import Reservation
+from src.dto.group.group_user_dto import GroupUserDTO
+from src.handler.group.group_user_handler import GroupUserHandler
 
 class ReservationFactory(factory.alchemy.SQLAlchemyModelFactory):
     class Meta:
@@ -41,4 +44,18 @@ class ReservationFactory(factory.alchemy.SQLAlchemyModelFactory):
     # Foreign key and relationship
     user = factory.SubFactory(UserFactory)
     admin = factory.SubFactory(UserFactory)
-    group = factory.SubFactory(GroupFactory)
+    class_ = factory.LazyFunction(
+        lambda: choice(PostgresDatabase.get_seed_session().query(Class).all())
+    )
+    group = factory.SubFactory(GroupFactory, class_=factory.SelfAttribute('..class_'))
+    
+    @factory.post_generation
+    def after_group_create(self, create, extracted, **kwargs):
+        if not create:
+            return
+        
+        if self.group:
+            GroupUserHandler.create_group_user(GroupUserDTO(**{
+                'user_id': self.user.id,
+                'group_id': self.group.id,
+            }))

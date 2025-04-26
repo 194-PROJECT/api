@@ -1,5 +1,4 @@
 import factory
-from database.factory.semester_factory import SemesterFactory
 from database.postgres.database import PostgresDatabase
 from database.model.classes import Class
 from database.factory.users_factory import UserFactory
@@ -31,6 +30,7 @@ class ClassFactory(factory.alchemy.SQLAlchemyModelFactory):
         size=1,
         factory_related_name='class_'
     )
-    course = factory.SubFactory('database.factory.course_factory.CourseFactory')
     instructor = factory.SubFactory(UserFactory, is_faculty=True)
-    semester = factory.SubFactory(SemesterFactory)
+    course = factory.SubFactory("database.factory.course_factory.CourseFactory")
+    semester = factory.SubFactory("database.factory.semester_factory.SemesterFactory")
+    

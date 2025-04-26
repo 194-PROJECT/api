@@ -1,6 +1,6 @@
 from .asset_factory import AssetFactory # noqa
 from .asset_image_factory import AssetImageFactory # noqa
-from .class_schedule_factory import ClassScheduleFactory # noqa
+# from .class_schedule_factory import ClassScheduleFactory # noqa
 from .classes_factory import ClassFactory # noqa
 from .course_factory import CourseFactory # noqa
 from .department_factory import DepartmentFactory # noqa

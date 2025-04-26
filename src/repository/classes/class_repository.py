@@ -1,6 +1,9 @@
+from datetime import date
+from database.model.semester import Semester
+from database.postgres.database import PostgresDatabase
 from database.postgres.query import QueryExecutor
 from database.model.classes import Class
-from sqlalchemy import TextClause, delete, insert, select, update
+from sqlalchemy import TextClause, delete, insert, select, update, orm
 from sqlalchemy.dialects import postgresql
 from typing import Optional
 
@@ -29,12 +32,22 @@ class ClassRepository:
 
     @staticmethod
     def get_class(id: int) -> Optional[ClassDTO]:
-        query = select(Class).where(Class.id == id).compile(
-            compile_kwargs={"literal_binds": True},
-            dialect=postgresql.dialect(),
+        query = (
+            select(Class)
+            .options(
+                orm.selectinload(Class.course),
+                orm.selectinload(Class.instructor),
+                orm.selectinload(Class.semester),
+            )
+            .where(Class.id == id)
         )
-        data = QueryExecutor.fetch_one(str(query))
-        return ClassDTO(**data) if data else None
+
+        session = PostgresDatabase.get_session()
+        try:
+            data = session.execute(query).scalars().unique().one_or_none()
+            return ClassDTO.model_validate(data) if data else None
+        finally:
+            session.close()
 
     @staticmethod
     def get_classes(
@@ -43,7 +56,15 @@ class ClassRepository:
         order_by_clause: Optional[TextClause],
         where_clause: Optional[TextClause],
     ) -> Optional[list[ClassDTO]]:
-        query = select(Class).order_by(order_by_clause)
+        query = (
+            select(Class)
+            .options(
+                orm.selectinload(Class.course),
+                orm.selectinload(Class.instructor),
+                orm.selectinload(Class.semester),
+            )
+            .order_by(order_by_clause)
+        )
 
         if where_clause is not None:
             query = query.where(where_clause)
@@ -52,14 +73,58 @@ class ClassRepository:
             query
             .limit(limit)
             .offset(offset)
-            .compile(
-                compile_kwargs={"literal_binds": True},
-                dialect=postgresql.dialect(),
-            )
         )
+        
+        session = PostgresDatabase.get_session()
+        try:
+            data = session.execute(query).scalars().unique().all()
+            return [ClassDTO.model_validate(reservation) for reservation in data] if data else None
+        finally:
+            session.close()
 
-        data = QueryExecutor.fetch_all(str(query))
-        return [ClassDTO(**class_) for class_ in data] if data else None
+    @staticmethod
+    def get_classes_by_current_semester(
+        limit: int,
+        offset: int,
+        order_by_clause: Optional[TextClause],
+        where_clause: Optional[TextClause],
+    ) -> Optional[list[ClassDTO]]:
+        session = PostgresDatabase.get_session()
+        try:
+            today = date.today()
+            semester_query = (
+                select(Semester)
+                .where(Semester.start_date <= today, Semester.end_date >= today)
+            )
+            current_semester = session.execute(semester_query).scalar_one_or_none()
+
+            if not current_semester:
+                return None
+
+            query = (
+                select(Class)
+                .options(
+                    orm.selectinload(Class.course),
+                    orm.selectinload(Class.instructor),
+                    orm.selectinload(Class.semester),
+                )
+                .where(Class.semester_id == current_semester.id)
+                .order_by(order_by_clause)
+            )
+            
+            if where_clause is not None:
+                query = query.where(where_clause)
+
+            query = (
+                query
+                .limit(limit)
+                .offset(offset)
+            )
+
+            data = session.execute(query).scalars().unique().all()
+            return [ClassDTO.model_validate(c) for c in data] if data else None
+        finally:
+            session.close()
 
     @staticmethod
     def get_class_count(where_clause: Optional[TextClause]) -> int:

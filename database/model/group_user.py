@@ -14,7 +14,7 @@ class GroupUser(Base):
     updated_at = Column(DateTime(timezone=True), server_default=sql.func.now(), onupdate=sql.func.now())
     # 'From' Relationships
     group = orm.relationship(Group, back_populates='users', foreign_keys=[group_id])
-    users = orm.relationship(User, back_populates='groups', foreign_keys=[user_id])
+    user = orm.relationship(User, back_populates='groups', foreign_keys=[user_id])
 
 GroupUserKeyEnum = Enum('GroupUserKeyEnum', {
     column.capitalize(): column for column in GroupUser.__table__.columns.keys()

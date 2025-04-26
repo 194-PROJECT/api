@@ -23,6 +23,15 @@ class ClassHandler:
         return ClassRepository.get_classes(limit, offset, order_by_clause, where_clause)
 
     @staticmethod
+    def get_classes_by_current_semester(
+        limit: int,
+        offset: int,
+        order_by_clause: TextClause,
+        where_clause: Optional[TextClause]
+    ) -> Optional[List[ClassDTO]]:
+        return ClassRepository.get_classes_by_current_semester(limit, offset, order_by_clause, where_clause)
+
+    @staticmethod
     def get_class_count(where_clause: Optional[str]) -> int:
         return ClassRepository.get_class_count(where_clause)
 

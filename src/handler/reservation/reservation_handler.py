@@ -38,8 +38,24 @@ class ReservationHandler:
         return ReservationRepository.get_reservations(limit, offset, order_by_clause, where_clause)
 
     @staticmethod
-    def get_reservation_count(where_clause: Optional[str]) -> int:
-        return ReservationRepository.get_reservation_count(where_clause)
+    def get_user_reservations(
+        user_id: int,
+        limit: int,
+        offset: int,
+        order_by_clause: Optional[TextClause] = None,
+        where_clause: Optional[TextClause] = None,
+    ) -> Optional[list[ReservationDTO]]:
+        return ReservationRepository.get_user_reservations(user_id, limit, offset, order_by_clause, where_clause)
+
+    @staticmethod
+    def get_reservation_count(
+        where_clause: Optional[str] = None,
+        user_id: Optional[int] = None,
+    ) -> int:
+        return ReservationRepository.get_reservation_count(
+            where_clause=where_clause,
+            user_id=user_id,
+        )
 
     @staticmethod
     def update_reservation(id: int, reservation: ReservationDTO) -> Optional[ReservationDTO]:

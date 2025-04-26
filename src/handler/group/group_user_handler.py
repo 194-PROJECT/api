@@ -22,3 +22,7 @@ class GroupUserHandler:
     @staticmethod
     def delete_group_user(id: int) -> None:
         GroupUserRepository.delete_group_user(id)
+
+    @staticmethod
+    def user_in_group(user_id: int, group_id: int) -> bool:
+        return GroupUserRepository.user_in_group(user_id, group_id)

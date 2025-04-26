@@ -59,12 +59,12 @@ class ProgramFactory(factory.alchemy.SQLAlchemyModelFactory):
     # Foreign key and relationship
     students = factory.RelatedFactoryList(
         'database.factory.student_factory.StudentFactory',
-        size=1,
+        size=10,
         factory_related_name='program'
     )
     courses = factory.RelatedFactoryList(
         'database.factory.course_factory.CourseFactory',
-        size=1,
+        size=2,
         factory_related_name='program'
     )
     department = factory.SubFactory('database.factory.department_factory.DepartmentFactory')
